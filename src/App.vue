@@ -7,12 +7,20 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import socket from "./socket";
 
 export default {
   name: 'App',
   components: {
     HelloWorld
-  }
+  },
+created() {
+    socket.on("connect_error", (err) => {
+      if (err.message === "invalid username") {
+        this.usernameAlreadySelected = false;
+      }
+    });
+  },
 }
 </script>
 
