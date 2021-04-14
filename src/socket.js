@@ -7,9 +7,9 @@ socket.onAny((event, ...args) => {
   console.log(event, args);
 });
 
-socket.on('message', ({ content }) => {
+// socket.on('message', ({ content }) => {
 
-});
+// });
 
 socket.emit('message', { content: 'lol noob'})
 
