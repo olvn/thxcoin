@@ -1,5 +1,5 @@
 #!/bin/bash
 
-npm run serve &
+ENDPOINT_URL=http://localhost:3000 npm run serve &
 cd server
 nodemon index.js

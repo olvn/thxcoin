@@ -8,6 +8,11 @@
   </div>
 </template>
 
+<script>
+// import socket from '@/lib/socket'
+// console.log(socket)
+</script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

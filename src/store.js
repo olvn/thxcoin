@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Vuex from "vuex";
 import Chat from '@/stores/chat.js'
+import User from '@/stores/user.js'
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
     //registering the auth module that is imported
-    Chat
+    Chat,
+    User
   }
 });

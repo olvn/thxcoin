@@ -1,0 +1,2 @@
+export ENDPOINT_URL=/
+npm run build
