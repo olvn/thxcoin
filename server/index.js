@@ -5,7 +5,7 @@ const sio = require("socket.io");
 const path = require("path");
 
 // Middleware for serving '/dist' directory
-const staticFileMiddleware = express.static(path.join(__dirname, '../dist'));
+const staticFileMiddleware = express.static(path.join(__dirname, 'dist'));
 app.use(staticFileMiddleware);
 const server = http.createServer(app);
 const io = sio(server, {
