@@ -20,5 +20,6 @@ export default {
         context.commit("REGISTER_USER", username)
       }
     }
-  }
+  },
+  namespaced: true
 };

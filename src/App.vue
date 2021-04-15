@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <div id="nav" v-if="isLoggedIn">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
@@ -9,8 +9,18 @@
 </template>
 
 <script>
-// import socket from '@/lib/socket'
-// console.log(socket)
+import chatService from '@/lib/chatService'
+
+export default {
+  created() {
+    chatService.registerListeners();
+  },
+  computed: {
+    isLoggedIn() {
+      return !!this.$store.getters['User/currentUser']
+    }
+  }
+}
 </script>
 
 <style>
