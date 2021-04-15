@@ -1,9 +1,9 @@
 <template>
   <div>
     hey
-    <div v-for="msg in messages" :key="msg.uuid">{{ msg.content }}</div>
+    <div v-for="msg in messages" :key="msg.uuid">{{msg.username }}: {{ msg.content }}</div>
     <form @submit.prevent="onSubmit" class="form">
-      <textarea v-model="input" placeholder="Your message..."/>
+      <input v-model="input" placeholder="Your message..."/>
       <button>Send</button>
     </form>
   </div>

@@ -18,14 +18,22 @@ const io = sio(server, {
 //   res.sendfile(path.dirname('../dist/index.html'));
 // });
 
-const users = new Set();
+const onlineUsers = new Set();
+
+
+io.use((socket, next) => {
+  const username = socket.handshake.auth.username;
+  console.log('username', username)
+  socket.username = username;
+  next();
+});
 
 io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("registerUser", ({ username }, callback) => {
-    if (!users.has(username)) {
-      users.add(username);
+    if (!onlineUsers.has(username)) {
+      onlineUsers.add(username);
       callback({
         success: true,
       });
@@ -39,11 +47,18 @@ io.on("connection", (socket) => {
 
   socket.on("sentMessage", ({ message }) => {
     io.emit("message", {
-      username: "todo",
+      username: socket.username,
       uuid: Date.now(),
       content: message,
     });
   });
+
+  socket.on('disconnect', () => {
+    if (socket.username) {
+      onlineUsers.delete(socket.username);
+    }
+    console.log(socket.username, 'disconnected');
+  })
 });
 
 server.listen(process.env.PORT || 3000, () => {
