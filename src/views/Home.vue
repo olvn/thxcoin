@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import socket from '@/lib/socket'
 console.log(socket)
 
@@ -15,3 +14,8 @@ export default {
   }
 }
 </script>
+<style>
+body {
+  background-color: black;
+}
+</style>

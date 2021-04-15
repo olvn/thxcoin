@@ -20,10 +20,9 @@ const io = sio(server, {
 
 const onlineUsers = new Set();
 
-
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
-  console.log('username', username)
+  console.log("username", username);
   socket.username = username;
   next();
 });
@@ -40,7 +39,8 @@ io.on("connection", (socket) => {
     } else {
       callback({
         success: false,
-        reason: 'USERNAME TAKEN'
+        reason:
+          "USER ALREADY ONLINE. FIND YOUR OTHER TAB OR STOP TRYING TO HACK.",
       });
     }
   });
@@ -53,12 +53,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     if (socket.username) {
       onlineUsers.delete(socket.username);
     }
-    console.log(socket.username, 'disconnected');
-  })
+    console.log(socket.username, "disconnected");
+  });
 });
 
 server.listen(process.env.PORT || 3000, () => {
