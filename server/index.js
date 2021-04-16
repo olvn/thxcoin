@@ -18,7 +18,8 @@ const io = sio(server, {
 //   res.sendfile(path.dirname('../dist/index.html'));
 // });
 
-const onlineUsers = new Set();
+const registeredUsers = new Set();
+const totals = {}
 
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -31,8 +32,8 @@ io.on("connection", (socket) => {
   console.log("a user connected");
 
   socket.on("registerUser", ({ username }, callback) => {
-    if (!onlineUsers.has(username)) {
-      onlineUsers.add(username);
+    if (!registeredUsers.has(username)) {
+      registeredUsers.add(username);
       callback({
         success: true,
       });
@@ -40,7 +41,7 @@ io.on("connection", (socket) => {
       callback({
         success: false,
         reason:
-          "USER ALREADY ONLINE. FIND YOUR OTHER TAB OR STOP TRYING TO HACK.",
+          "USER ALREADY EXISTS.",
       });
     }
   });
@@ -53,10 +54,17 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("disconnect", () => {
+  socket.on('updateTotal', ({ total }) => {
     if (socket.username) {
-      onlineUsers.delete(socket.username);
+      totals[socket.username] = total;
     }
+  });
+
+  setInterval(() => {
+    socket.emit('updateGlobalTotals', totals);
+  }, 1000);
+
+  socket.on("disconnect", () => {
     console.log(socket.username, "disconnected");
   });
 });

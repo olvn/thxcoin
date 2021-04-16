@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
+import Miner from "../views/Miner.vue";
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -8,8 +8,8 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home,
+    name: "Miner",
+    component: Miner,
   },
   {
     path: "/login",
@@ -47,7 +47,8 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(store.getters["User/currentUser"]);
+  console.log(store.getters['User/currentUser'])
+
   if (to.name !== "Login" && !store.getters["User/currentUser"])
     next({ name: "Login" });
   else next();

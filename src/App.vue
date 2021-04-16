@@ -4,41 +4,40 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import chatService from '@/lib/chatService'
+import chatService from "@/lib/chatService";
+import userService from "@/lib/userService";
+import minerService from "@/lib/minerService";
 
 export default {
-  created() {
+  async mounted() {
+    const username = localStorage.getItem("username");
+    if (username) {
+      userService.loginUser(username);
+    }
     chatService.registerListeners();
+    minerService.registerListeners();
   },
   computed: {
     isLoggedIn() {
-      return !!this.$store.getters['User/currentUser']
-    }
-  }
-}
+      return !!this.$store.getters["User/currentUser"];
+    },
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: 'Times New Roman', sans-serif;
+  font-family: "Times New Roman", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
 }
 
 #nav a {
-  font-weight: bold;
-  color: #2c3e50;
 }
 
 #nav a.router-link-exact-active {

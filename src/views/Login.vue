@@ -24,11 +24,11 @@ import userService from "@/lib/userService";
 
 export default {
   mounted() {
-    const maybeUsername = localStorage.getItem("username");
-    if (maybeUsername) {
-      this.username = maybeUsername;
-      this.attemptRegister();
-    }
+    // const maybeUsername = localStorage.getItem("username");
+    // if (maybeUsername) {
+    //   this.username = maybeUsername;
+    //   this.attemptRegister();
+    // }
   },
   data() {
     return {

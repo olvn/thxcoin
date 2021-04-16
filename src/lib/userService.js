@@ -19,6 +19,11 @@ export default {
       });
     });
   },
+  loginUser(username) {
+    socket.disconnect();
+    socket.auth = { username };
+    socket.connect();
+  },
   registerListeners() {
     // update state from listened events
   },
