@@ -1,59 +1,61 @@
 <template>
   <div class="home">
-    <button @click="mineCoin">MINE 1 THXCOIN</button>
-    <div> you have {{ total }} $THX</div>
-    <div> you have earned a total of {{ lifetimeTotal }} in your life </div>
+    <a @click="mineCoin">MINE 1 THXCOIN</a>
+    <div>you have {{ total.toFixed(5) }} $THX</div>
+    <div>you have earned a total of {{ lifetimeTotal.toFixed(5) }} in your life</div>
 
-    <div v-if="lifetimeTotal > 5">
-        <button @click="buy(2)">BUY FOR 15 $THX</button> A pentium 3
-        <div> this was used by early cybersettlers to play unreal tournament. mines at a sluggish 0.01 $THX per sec</div>
-      </div>
+
+    <div :key="upgrade.name" v-for="upgrade in upgrades">
+      <a class="bg-blue-400" @click="buy(upgrade)">
+      {{ upgrade.name }} - {{ upgrade.cost }}
+      </a>
+    </div>
+    {{ this.cps }}
   </div>
 </template>
 
 <script>
-import minerService from '@/lib/minerService';
+import minerService from "@/lib/minerService";
+import upgrades from "@/lib/upgrades"
 
 export default {
-  name: 'Miner',
+  name: "Miner",
   mounted() {
     this.updateInterval = setInterval(() => {
+      this.$store.dispatch("Miner/addAmount", this.cps * 1000 / this.timerMs);
       minerService.updateTotal(this.total);
-    });
+   }, this.timerMs);
   },
   data() {
     return {
-      updateInterval: null
-    }
+      timerMs: 10,
+      updateInterval: null,
+      upgrades: upgrades
+    };
   },
   computed: {
     total() {
-      return this.$store.getters['Miner/total'];
+      return this.$store.getters["Miner/total"];
     },
     lifetimeTotal() {
-      return this.$store.getters['Miner/lifetimeTotal']
+      return this.$store.getters["Miner/lifetimeTotal"];
     },
     leaders() {
-      return this.$store.getters['Miner/leaderboard']
+      return this.$store.getters["Miner/leaderboard"];
+    },
+    cps() {
+      return this.$store.getters["Miner/currentCps"]
     }
   },
   methods: {
     mineCoin() {
-      this.$store.dispatch('Miner/addAmount', 1);
+      this.$store.dispatch("Miner/addAmount", 1);
     },
-    async buy(amount) {
-      const bought = await this.$store.dispatch('Miner/spendAmount', amount);
-
-          console.log("hey", bought)
-      if (bought) {
-        setInterval(() => {
-          console.log("hey")
-          this.$store.dispatch('Miner/addAmount', 0.01 / 100);
-        }, 10);
-      }
-    }
-  }
-}
+    async buy(upgrade) {
+      await this.$store.dispatch("Miner/buyUpgrade", upgrade);
+    },
+  },
+};
 </script>
 <style scoped>
 </style>

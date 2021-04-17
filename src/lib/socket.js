@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 
-const URL = process.env.ENDPOINT_URL || 'http://localhost:3000';
+const URL = process.env.VUE_APP_ENDPOINT_URL;
+console.log(process.env)
 const socket = io(URL);
 
 socket.onAny((event, ...args) => {

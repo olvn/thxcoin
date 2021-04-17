@@ -37,6 +37,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
+a {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 #nav a {
 }
 

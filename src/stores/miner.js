@@ -4,6 +4,7 @@ export default {
       total: 0,
       lifetime: 0,
       leaderboard: {},
+      upgrades: []
     };
   },
   getters: {
@@ -15,6 +16,12 @@ export default {
     },
     leaderboard: (state) => {
       return state.leaderboard
+    },
+    currentCps: (state) => {
+      return state.upgrades.reduce((acc, upgrade) => {
+        acc += upgrade.cps;
+        return acc;
+      }, 0)
     }
   },
   mutations: {
@@ -27,6 +34,9 @@ export default {
     },
     UPDATE_LEADERBOARD(state, leaders) {
       state.leaderboard = leaders;
+    },
+    ADD_UPGRADE(state, upgrade) {
+      state.upgrades.push(upgrade);
     }
   },
   actions: {
@@ -46,6 +56,14 @@ export default {
       console.log("heyyyy", leaders)
       context.commit("UPDATE_LEADERBOARD", leaders);
     },
+    buyUpgrade(context, upgrade) {
+      if (context.getters["total"] - upgrade.cost) {
+        upgrade.buy();
+        context.commit("ADD_UPGRADE", upgrade)
+        return true;
+      }
+      return false;
+    }
   },
   namespaced: true,
 };

@@ -1,3 +1,4 @@
-export ENDPOINT_URL=/
-npm run build
+npm run build -- --mode=production
+git add server/dist
+git commit -m "new build"
 git subtree push --prefix server heroku master
