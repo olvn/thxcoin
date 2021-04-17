@@ -7,10 +7,11 @@
 
     <div :key="upgrade.name" v-for="upgrade in upgrades">
       <a class="bg-blue-400" @click="buy(upgrade)">
-      {{ upgrade.name }} - {{ upgrade.cost }}
+      {{ upgrade.name }} - {{ upgrade.cost }} - total owned: {{ upgrade.totalOwned }}
       </a>
     </div>
     {{ this.cps }}
+    <a @click="$store.dispatch('Miner/initState')" >ok </a>
   </div>
 </template>
 
@@ -40,11 +41,17 @@ export default {
     lifetimeTotal() {
       return this.$store.getters["Miner/lifetimeTotal"];
     },
+    lifetimeHigh() {
+      return this.$store.getters["Miner/lifetimeHigh"];
+    },
     leaders() {
       return this.$store.getters["Miner/leaderboard"];
     },
     cps() {
       return this.$store.getters["Miner/currentCps"]
+    },
+    upgradeTotalByName() {
+      return this.$store.getters["Miner/ownedUpgrades"]
     }
   },
   methods: {

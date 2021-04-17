@@ -21,11 +21,19 @@ export default {
     }
     chatService.registerListeners();
     minerService.registerListeners();
+    this.$store.dispatch("Miner/initState");
+
+    setInterval(() => {
+      this.$store.dispatch("Miner/saveState");
+    }, 5000);
   },
   computed: {
     isLoggedIn() {
       return !!this.$store.getters["User/currentUser"];
     },
+  },
+  beforeDestroy() {
+    this.$store.dispatch("Miner/saveState");
   },
 };
 </script>
