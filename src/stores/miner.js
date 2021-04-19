@@ -35,7 +35,7 @@ export default {
     },
     availableUpgrades: (state) => {
       const upgrades = Object.values(state.upgrades)
-      return upgrades.filter(u => u.cost() <= state.high);
+      return upgrades.filter(u => u.baseCost <= state.high);
     }
   },
   mutations: {
@@ -88,7 +88,7 @@ export default {
       context.commit("UPDATE_LEADERBOARD", leaders);
     },
     buyUpgrade(context, upgrade) {
-      if (context.getters["total"] - upgrade.cost() > 0) {
+      if (context.getters["total"] - upgrade.cost() >= 0) {
         context.commit("ADD_UPGRADE", upgrade);
         context.commit("SUBTRACT_AMOUNT", upgrade.cost());
         context.state.upgrades[upgrade.name].buy();

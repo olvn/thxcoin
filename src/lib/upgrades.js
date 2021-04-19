@@ -17,7 +17,7 @@ class Upgrade {
         let currentCost = this.baseCost;
 
         for (let i = 0; i < this.numPurchased; i++) {
-            currentCost = Number((currentCost + this.inflation(currentCost)).toFixed(2))
+            currentCost = Number((currentCost + this.inflation(currentCost)))
         }
 
         return currentCost;
@@ -25,7 +25,6 @@ class Upgrade {
 
     buy() {
         this.numPurchased += 1;
-        this.cost = Number((this.cost + this.inflation()).toFixed(2));
     }
 }
 
