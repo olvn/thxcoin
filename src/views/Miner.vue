@@ -1,37 +1,48 @@
 <template>
   <div class="home">
     <div class="text-center m-2">
-    <a @click="mineCoin" class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500">MINE 1 THXCOIN</a>
+      <a
+        @click="mineCoin"
+        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+        >MINE {{ clickWorth }} $THX</a
+      >
+      <a
+        @click="sellCoin"
+        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+      >
+        SELL $THX
+      </a>
     </div>
+
+      <div>
+        1 $THX ≈ {{ exchangeRate.toFixed(5) }} USD
+      </div>
 
     <div class="flex m-4 p-4 place-content-between text-center">
       <div class="w-1/3">
-        <div>
-          {{ total.toFixed(5) }}
-        </div>
-        <div>
-          $THX
+        <div>{{ totalUsd.toFixed(2) }}</div>
+
+        <div class="">
+          <img class="w-6 h-6 inline" src="@/assets/gifs/dollarsign4.gif" />
+          USD
         </div>
       </div>
-
       <div class="w-1/3">
         <div>
-          50.00
+          {{ totalCoin.toFixed(5) }}
         </div>
         <div>
-          $USD
+          <img class="w-6 h-6 inline" src="@/assets/gifs/coinstair.gif" />
+          THX
         </div>
       </div>
-
       <div class="w-1/3">
+        <div>25334</div>
         <div>
-          25334
-        </div>
-        <div>
+          <img class="w-6 h-6 inline" src="@/assets/gifs/lightning.gif" />
           MW/s
         </div>
       </div>
- 
     </div>
 
     <div
@@ -45,22 +56,28 @@
         <div class="text-xs">{{ upgrade.description }}</div>
       </div>
       <div class="text-center">
-
-          <a>
         <div
+          :class="{ invisible: upgrade.cost() <= totalUsd }"
+          class="font-bold text-red-600 text-xs"
+        >
+          can't afford
+        </div>
+        <a>
+          <div
             class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+            v-bind:class="{
+              'bg-gray-300 text-gray-400': upgrade.cost() > totalUsd,
+            }"
             @click="buy(upgrade)"
           >
             ${{ upgrade.cost().toFixed(2) }}
-        </div>
+          </div>
+        </a>
 
-          </a>
-        <div class="text-xs">
-        owned: {{ upgrade.numPurchased }}
-        </div>
+        <div class="text-xs">owned: {{ upgrade.numPurchased }}</div>
       </div>
     </div>
-    {{ this.cps }}
+    {{ cps }}
     <a @click="$store.dispatch('Miner/initState')">ok </a>
   </div>
 </template>
@@ -71,26 +88,41 @@ import minerService from "@/lib/minerService";
 export default {
   name: "Miner",
   mounted() {
-    this.updateInterval = setInterval(() => {
-      this.$store.dispatch("Miner/addAmount", (this.cps * 1000) / this.timerMs);
-      minerService.updateTotal(this.total);
+    this.totalUpdateInterval = setInterval(() => {
+      this.$store.dispatch(
+        "Miner/addCoinAmount",
+        (this.cps * 1000) / this.timerMs
+      );
     }, this.timerMs);
+
+    this.transmissionInterval = setInterval(() => {
+      minerService.updateTotalCoin();
+    });
   },
   data() {
     return {
-      timerMs: 10,
-      updateInterval: null,
+      timerMs: 50,
+      totalUpdateInterval: null,
     };
   },
   computed: {
-    total() {
-      return this.$store.getters["Miner/total"];
+    totalCoin() {
+      return this.$store.getters["Miner/totalCoin"];
     },
-    lifetimeTotal() {
+    lifetimeTotalCoin() {
       return this.$store.getters["Miner/lifetimeTotal"];
     },
-    lifetimeHigh() {
+    lifetimeHighCoin() {
       return this.$store.getters["Miner/lifetimeHigh"];
+    },
+    totalUsd() {
+      return this.$store.getters["Miner/totalUsd"];
+    },
+    clickWorth() {
+      return this.$store.getters["Miner/clickWorth"];
+    },
+    exchangeRate() {
+      return this.$store.getters["Miner/exchangeRate"];
     },
     leaders() {
       return this.$store.getters["Miner/leaderboard"];
@@ -104,14 +136,17 @@ export default {
   },
   methods: {
     mineCoin() {
-      this.$store.dispatch("Miner/addAmount", 1);
+      this.$store.dispatch("Miner/addCoinAmount", this.clickWorth);
+    },
+    sellCoin() {
+      this.$store.dispatch("Miner/sellCoinForUsd", this.totalCoin);
     },
     async buy(upgrade) {
       await this.$store.dispatch("Miner/buyUpgrade", upgrade);
     },
   },
   beforeDestroy() {
-    clearInterval(this.updateInterval);
+    clearInterval(this.totalUpdateInterval);
   },
 };
 </script>

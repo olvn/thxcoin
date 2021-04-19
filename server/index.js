@@ -54,9 +54,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('updateTotal', ({ total }) => {
+  socket.on('updateTotals', ({ coin, usd }) => {
     if (socket.username) {
-      totals[socket.username] = total;
+      totals[socket.username] = {
+        coin, usd
+      };
     }
   });
 

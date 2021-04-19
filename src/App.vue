@@ -4,7 +4,7 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
       <router-link to="/chat">
-      <img src="@/assets/gifs/email2.gif"/>
+      <img src="@/assets/gifs/email3.gif"/>
       </router-link>
     </div>
     <router-view />

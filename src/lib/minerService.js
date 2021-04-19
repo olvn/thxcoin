@@ -3,8 +3,8 @@ import store from '@/store'
 
 // actions to take from components to emit events
 export default {
-  updateTotal(total) {
-    socket.emit('updateTotal', { total })
+  updateTotalCoin() {
+    socket.emit('updateTotals', { coin: store.getters['Miner/totalCoin'], usd: store.getters['Miner/totalUsd'] })
   },
   registerListeners() {
     // update state from listened events
