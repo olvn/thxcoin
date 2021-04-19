@@ -7,7 +7,7 @@
 
     <div :key="upgrade.name" v-for="upgrade in upgrades">
       <a class="bg-blue-400" @click="buy(upgrade)">
-      {{ upgrade.name }} - {{ upgrade.cost() }} - total owned: {{ upgrade.numPurchased }}
+      {{ upgrade.name }} - {{ upgrade.description }} {{ upgrade.cost() }} - total owned: {{ upgrade.numPurchased }}
       </a>
     </div>
     {{ this.cps }}
