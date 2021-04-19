@@ -6,11 +6,11 @@ class Upgrade {
     this.cps = cps;
     this.continuous = continuous;
     this.numPurchased = 0;
-    this.inflationDivisor = 100.0;
+    this.inflationDivisor = 1000.0;
   }
 
   inflation(currentCost) {
-    return currentCost * (this.numPurchased / this.inflationDivisor);
+    return Math.sqrt(currentCost) * (this.numPurchased / this.inflationDivisor);
   }
 
   cost() {
@@ -39,19 +39,19 @@ const upgrades = [
     "Repurposed Bitcoin ASIC",
     "Dedicated chip just for solving hashes, stripped from an abandoned PRC mining warehouse. Should help.",
     100.0,
-    0.00101010101
+    0.01
   ),
   new Upgrade(
     "macbiook air",
     "Dedicated chip just for solving hashes, stripped from an abandoned PRC mining warehouse. Should help.",
     100.0,
-    0.00101010101
+    0.055555
   ),
   new Upgrade(
     "RTX 4090",
     "Fortnite 12fps basically unplayable.",
     100.0,
-    0.00101010101
+    1.0
   ),
   new Upgrade(
     "Big Pussy",
@@ -60,8 +60,6 @@ const upgrades = [
     0.00101010101
   ),
 ];
-
-console.log(upgrades, "tototo");
 
 export default upgrades.reduce((acc, u) => {
   acc[u.name] = u;

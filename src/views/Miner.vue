@@ -52,7 +52,7 @@
     >
       <img class="w-12 h-12" src="@/assets/gifs/email1.gif" />
       <div class="flex-grow">
-        <div>{{ upgrade.name }}</div>
+        <div>{{ upgrade.name }} <span class="text-xs text-green-500">+{{ upgrade.cps }} $THX/s</span></div>
         <div class="text-xs">{{ upgrade.description }}</div>
       </div>
       <div class="text-center">
@@ -91,7 +91,7 @@ export default {
     this.totalUpdateInterval = setInterval(() => {
       this.$store.dispatch(
         "Miner/addCoinAmount",
-        (this.cps * 1000) / this.timerMs
+        (this.cps / 1000) * this.timerMs
       );
     }, this.timerMs);
 
