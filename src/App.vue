@@ -23,9 +23,14 @@ export default {
     minerService.registerListeners();
     this.$store.dispatch("Miner/initState");
 
-    setInterval(() => {
+    this.saveInterval = setInterval(() => {
       this.$store.dispatch("Miner/saveState");
     }, 5000);
+  },
+  data() {
+    return {
+      saveInterval: null,
+    };
   },
   computed: {
     isLoggedIn() {
@@ -34,6 +39,7 @@ export default {
   },
   beforeDestroy() {
     this.$store.dispatch("Miner/saveState");
+    clearInterval(this.saveInterval);
   },
 };
 </script>

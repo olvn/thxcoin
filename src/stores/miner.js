@@ -1,4 +1,5 @@
 import upgrades from "@/lib/upgrades";
+console.log("afdjasfd", upgrades)
 
 export default {
   state: () => {
@@ -8,7 +9,7 @@ export default {
       high: 0,
       leaderboard: {},
       upgrades: upgrades,
-    };
+    }; 
   },
   getters: {
     total: (state) => {
@@ -29,8 +30,14 @@ export default {
         return acc;
       }, 0);
     },
-    ownedUpgrades: (state) => {
+    upgrades: (state) => {
       return state.upgrades;
+    },
+    availableUpgrades: (state) => {
+      const upgrades = Object.values(state.upgrades)
+      debugger; // eslint-disable-line no-debugger 
+      console.timeLog(upgrades[0].cost(), 'fowofow')
+      return upgrades.filter(u => u.cost() <= state.high);
     }
   },
   mutations: {
@@ -47,27 +54,21 @@ export default {
     UPDATE_LEADERBOARD(state, leaders) {
       state.leaderboard = leaders;
     },
-    ADD_UPGRADE(state, upgrade) {
-      if (!state.upgrades[upgrade.name]) {
-        console.log("adding first ", upgrade.name)
-        state.upgrades = {
-          ...state.upgrades,
-          [upgrade.name]: {
-            ...upgrade,
-          },
-        };
-      } else {
-        console.log("adding another ", upgrade.name)
-        state.upgrades[upgrade.name].totalOwned += 1;
-      }
-
+    ADD_UPGRADE(state) {
       localStorage.setItem("minerState", JSON.stringify(state));
     },
     LOAD_STATE(state, { total, lifetime, high, upgrades }) {
       state.total = total;
       state.lifetime = lifetime;
       state.high = high;
-      state.upgrades = upgrades;
+      for (let key of Object.keys(upgrades)) {
+        if (state.upgrades[key]) {
+          state.upgrades[key].numPurchased = upgrades[key].numPurchased;
+          state.upgrades[key].inflationDivisor = upgrades[key].inflationDivisor;
+        } else {
+          console.log(key, "not found in state, discarding`");
+        }
+      }
     },
     SAVE_STATE(state) {
       localStorage.setItem("minerState", JSON.stringify(state));
@@ -78,7 +79,6 @@ export default {
       context.commit("ADD_AMOUNT", amount);
     },
     spendAmount(context, amount) {
-      console.log(context.getters["total"] - amount);
       if (context.getters["total"] - amount >= 0) {
         context.commit("SUBTRACT_AMOUNT", amount);
         return true;
@@ -90,9 +90,10 @@ export default {
       context.commit("UPDATE_LEADERBOARD", leaders);
     },
     buyUpgrade(context, upgrade) {
-      if (context.getters["total"] - upgrade.cost) {
-        this.upgrades[upgrade.name].buy();
+      if (context.getters["total"] - upgrade.cost() > 0) {
         context.commit("ADD_UPGRADE", upgrade);
+        context.commit("SUBTRACT_AMOUNT", upgrade.cost());
+        context.state.upgrades[upgrade.name].buy();
         return true;
       }
       return false;

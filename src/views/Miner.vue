@@ -7,7 +7,7 @@
 
     <div :key="upgrade.name" v-for="upgrade in upgrades">
       <a class="bg-blue-400" @click="buy(upgrade)">
-      {{ upgrade.name }} - {{ upgrade.cost }} - total owned: {{ upgrade.totalOwned }}
+      {{ upgrade.name }} - {{ upgrade.cost() }} - total owned: {{ upgrade.numPurchased }}
       </a>
     </div>
     {{ this.cps }}
@@ -17,7 +17,6 @@
 
 <script>
 import minerService from "@/lib/minerService";
-import upgrades from "@/lib/upgrades"
 
 export default {
   name: "Miner",
@@ -31,7 +30,6 @@ export default {
     return {
       timerMs: 10,
       updateInterval: null,
-      upgrades: upgrades
     };
   },
   computed: {
@@ -50,8 +48,8 @@ export default {
     cps() {
       return this.$store.getters["Miner/currentCps"]
     },
-    upgradeTotalByName() {
-      return this.$store.getters["Miner/ownedUpgrades"]
+    upgrades() {
+      return this.$store.getters["Miner/availableUpgrades"]
     }
   },
   methods: {
@@ -62,6 +60,9 @@ export default {
       await this.$store.dispatch("Miner/buyUpgrade", upgrade);
     },
   },
+  beforeDestroy() {
+    clearInterval(this.updateInterval)
+  }
 };
 </script>
 <style scoped>
