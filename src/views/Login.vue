@@ -43,7 +43,7 @@ export default {
       const res = await userService.registerUser(this.username);
       if (res.success) {
         this.$store.dispatch("User/registerUser", this.username);
-        this.$router.push({ name: "Home" });
+        this.$router.push({ name: "Miner" });
       } else {
         this.errorText = res.reason;
         this.errorBlinker = setInterval(() => {

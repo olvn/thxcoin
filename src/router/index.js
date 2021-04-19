@@ -19,7 +19,7 @@ const routes = [
     beforeEnter: (to, from, next) => {
       console.log(!store.getters["User/currentUser"])
       if (!store.getters["User/currentUser"]) next();
-      else next({ name: "Home" });
+      else next({ name: "Miner" });
     },
   },
   {
