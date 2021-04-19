@@ -3,6 +3,9 @@
     <div id="nav" v-if="isLoggedIn">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
+      <router-link to="/chat">
+      <img src="@/assets/gifs/email2.gif"/>
+      </router-link>
     </div>
     <router-view />
   </div>
@@ -49,6 +52,17 @@ export default {
   font-family: "Times New Roman", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+ }
+
+ #app a {
+   cursor: pointer;
+ }
+
+body {
+ background-image: url('~@/assets/clouds.png');
+     background-repeat: repeat;
+
 }
 
 a {

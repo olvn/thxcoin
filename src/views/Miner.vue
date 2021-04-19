@@ -1,17 +1,67 @@
 <template>
   <div class="home">
-    <a @click="mineCoin">MINE 1 THXCOIN</a>
-    <div>you have {{ total.toFixed(5) }} $THX</div>
-    <div>you have earned a total of {{ lifetimeTotal.toFixed(5) }} in your life</div>
+    <div class="text-center m-2">
+    <a @click="mineCoin" class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500">MINE 1 THXCOIN</a>
+    </div>
 
+    <div class="flex m-4 p-4 place-content-between text-center">
+      <div class="w-1/3">
+        <div>
+          {{ total.toFixed(5) }}
+        </div>
+        <div>
+          $THX
+        </div>
+      </div>
 
-    <div :key="upgrade.name" v-for="upgrade in upgrades">
-      <a class="bg-blue-400" @click="buy(upgrade)">
-      {{ upgrade.name }} - {{ upgrade.description }} {{ upgrade.cost().toFixed(2) }} - total owned: {{ upgrade.numPurchased }}
-      </a>
+      <div class="w-1/3">
+        <div>
+          50.00
+        </div>
+        <div>
+          $USD
+        </div>
+      </div>
+
+      <div class="w-1/3">
+        <div>
+          25334
+        </div>
+        <div>
+          MW/s
+        </div>
+      </div>
+ 
+    </div>
+
+    <div
+      :key="upgrade.name"
+      v-for="upgrade in upgrades"
+      class="flex items-center bg-white m-2 p-2"
+    >
+      <img class="w-12 h-12" src="@/assets/gifs/email1.gif" />
+      <div class="flex-grow">
+        <div>{{ upgrade.name }}</div>
+        <div class="text-xs">{{ upgrade.description }}</div>
+      </div>
+      <div class="text-center">
+
+          <a>
+        <div
+            class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+            @click="buy(upgrade)"
+          >
+            ${{ upgrade.cost().toFixed(2) }}
+        </div>
+
+          </a>
+        <div class="text-xs">
+        owned: {{ upgrade.numPurchased }}
+        </div>
+      </div>
     </div>
     {{ this.cps }}
-    <a @click="$store.dispatch('Miner/initState')" >ok </a>
+    <a @click="$store.dispatch('Miner/initState')">ok </a>
   </div>
 </template>
 
@@ -22,9 +72,9 @@ export default {
   name: "Miner",
   mounted() {
     this.updateInterval = setInterval(() => {
-      this.$store.dispatch("Miner/addAmount", this.cps * 1000 / this.timerMs);
+      this.$store.dispatch("Miner/addAmount", (this.cps * 1000) / this.timerMs);
       minerService.updateTotal(this.total);
-   }, this.timerMs);
+    }, this.timerMs);
   },
   data() {
     return {
@@ -46,11 +96,11 @@ export default {
       return this.$store.getters["Miner/leaderboard"];
     },
     cps() {
-      return this.$store.getters["Miner/currentCps"]
+      return this.$store.getters["Miner/currentCps"];
     },
     upgrades() {
-      return this.$store.getters["Miner/availableUpgrades"]
-    }
+      return this.$store.getters["Miner/availableUpgrades"];
+    },
   },
   methods: {
     mineCoin() {
@@ -61,8 +111,8 @@ export default {
     },
   },
   beforeDestroy() {
-    clearInterval(this.updateInterval)
-  }
+    clearInterval(this.updateInterval);
+  },
 };
 </script>
 <style scoped>
