@@ -26,7 +26,7 @@ export default {
     },
     currentCps: (state) => {
       return Object.values(state.upgrades).reduce((acc, upgrade) => {
-        acc += upgrade.cps;
+        acc += upgrade.cps * upgrade.numPurchased;
         return acc;
       }, 0);
     },
@@ -35,8 +35,6 @@ export default {
     },
     availableUpgrades: (state) => {
       const upgrades = Object.values(state.upgrades)
-      debugger; // eslint-disable-line no-debugger 
-      console.timeLog(upgrades[0].cost(), 'fowofow')
       return upgrades.filter(u => u.cost() <= state.high);
     }
   },
