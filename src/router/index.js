@@ -15,7 +15,7 @@ const routes = [
     path: "/login",
     name: "Login",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Login.vue"),
+      import(/* webpackChunkName: "login" */ "../views/Login.vue"),
     beforeEnter: (to, from, next) => {
       console.log(!store.getters["User/currentUser"])
       if (!store.getters["User/currentUser"]) next();
@@ -38,8 +38,28 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Chat.vue"),
+      import(/* webpackChunkName: "chat" */ "../views/Chat.vue"),
   },
+  {
+    path: "/ticker",
+    name: "Ticker",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "ticker" */ "../views/Ticker.vue"),
+  },
+  {
+    path: "/message",
+    name: "Message",
+    component: () =>
+      import(/* webpackChunkName: "chat" */ "../views/Message.vue"),
+    beforeEnter: (to, from, next) => {
+      console.log(store.getters["Miner/canMessage"], "foo foo")
+      if (store.getters["Miner/canMessage"]) next();
+      else next({ name: "Miner" });
+    },
+  }
 ];
 
 const router = new VueRouter({

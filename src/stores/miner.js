@@ -1,10 +1,11 @@
 import upgrades from "@/lib/upgrades";
+import purchases from "@/lib/purchases";
 
 // let newGameState = {
 //   totalCoin: 0,
 //   highCoin: 0,
 //   lifetimeCoin: 0,
-//   totalUsd: 100, 
+//   totalUsd: 100,
 //   lifetimeUsd: 100,
 //   highUsd: 100,
 //   clickWorth: 0.001,
@@ -14,17 +15,19 @@ import upgrades from "@/lib/upgrades";
 export default {
   state: () => {
     return {
+      message: false,
       totalCoin: 0,
       lifetimeCoin: 0,
       highCoin: 0,
       totalUsd: 100,
       lifetimeUsd: 100,
       exchangeRate: 10,
-      highUsd: 0,
+      highUsd: 100,
       clickWorth: 0.001,
       leaderboard: {},
       upgrades: upgrades,
-    }; 
+      purchases: purchases,
+    };
   },
   getters: {
     totalCoin: (state) => {
@@ -43,7 +46,7 @@ export default {
       return state.lifetimeUsd;
     },
     exchangeRate: (state) => {
-      return state.exchangeRate
+      return state.exchangeRate;
     },
     leaderboard: (state) => {
       return state.leaderboard;
@@ -61,8 +64,15 @@ export default {
       return state.upgrades;
     },
     availableUpgrades: (state) => {
-      const upgrades = Object.values(state.upgrades)
-      return upgrades.filter(u => u.baseCost <= state.lifetimeUsd);
+      const upgrades = Object.values(state.upgrades);
+      return upgrades.filter((u) => u.baseCost <= state.highUsd);
+    },
+    availablePurchases: (state) => {
+      const purchases = Object.values(state.purchases);
+      return purchases.filter((u) => u.cost() <= state.highUsd);
+    },
+    canMessage: (state) => {
+      return state.message;
     }
   },
   mutations: {
@@ -89,25 +99,37 @@ export default {
     UPDATE_LEADERBOARD(state, leaders) {
       state.leaderboard = leaders;
     },
+    ADD_MESSAGE(state) {
+      state.message = true;
+    },
     ADD_UPGRADE(state) {
       localStorage.setItem("minerState", JSON.stringify(state));
     },
-    LOAD_STATE(state, { totalCoin, lifetimeCoin, highCoin, totalUsd, upgrades }) {
+    ADD_PURCHASE(state) {
+      localStorage.setItem("minerState", JSON.stringify(state));
+    },
+    LOAD_STATE(
+      state,
+      { totalCoin, lifetimeCoin, highCoin, totalUsd, upgrades, message }
+    ) {
       state.totalCoin = totalCoin || 0;
       state.lifetimeCoin = lifetimeCoin || 0;
       state.highCoin = highCoin || 0;
       state.totalUsd = totalUsd || 0;
+      state.message = message || false;
       for (let key of Object.keys(upgrades)) {
         if (state.upgrades[key]) {
           state.upgrades[key].numPurchased = upgrades[key].numPurchased || 0;
-          state.upgrades[key].inflationDivisor =  upgrades[key].inflationDivisor || state.upgrades[key].inflationDivisor;
+          state.upgrades[key].inflationDivisor =
+            upgrades[key].inflationDivisor ||
+            state.upgrades[key].inflationDivisor;
         } else {
           console.log(key, "not found in state, discarding`");
         }
       }
     },
     SAVE_STATE(state) {
-      console.log(state)
+      console.log(state);
       localStorage.setItem("minerState", JSON.stringify(state));
     },
   },
@@ -118,7 +140,10 @@ export default {
     sellCoinForUsd(context, amountCoin) {
       if (amountCoin <= context.state.totalCoin) {
         context.commit("SUBTRACT_COIN_AMOUNT", amountCoin);
-        context.commit("ADD_USD_AMOUNT", amountCoin * context.state.exchangeRate)
+        context.commit(
+          "ADD_USD_AMOUNT",
+          amountCoin * context.state.exchangeRate
+        );
       }
     },
     spendCoin(context, amount) {
@@ -149,8 +174,30 @@ export default {
       }
       return false;
     },
+    buyPurchase(context, purchase) {
+      if (purchase.currency === "USD") {
+        if (context.getters["totalUsd"] - purchase.cost() >= 0) {
+          context.commit("ADD_PURCHASE", purchase);
+          context.commit("SUBTRACT_USD_AMOUNT", purchase.cost());
+          context.state.purchases[purchase.name].buy();
+          return true;
+        }
+      } else {
+        // assume costs $THX
+        if (context.getters["totalCoin"] - purchase.cost() >= 0) {
+          context.commit("ADD_PURCHASE", purchase);
+          context.commit("SUBTRACT_COIN_AMOUNT", purchase.cost());
+          context.state.purchases[purchase.name].buy();
+          return true;
+        }
+      }
+      return false;
+    },
+    createMessage(context) {
+      context.commit("ADD_MESSAGE");
+    },
     initState(context) {
-      console.log(context)
+      console.log(context);
       // if (localStorage.getItem("minerState")) {
       //   console.log("loading old state...");
       //   const oldState = JSON.parse(localStorage.getItem("minerState"));
