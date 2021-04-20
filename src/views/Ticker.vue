@@ -2,7 +2,10 @@
   <div class="wrap ticker">
     <div class="content flex" :style="transform">
       <div v-for="char in processedMessage" class="letter">
-        {{ char }}
+        <img v-if="char.img" :src="char.img" class="image"/>
+        <span v-else>
+          {{ char.char }}
+        </span>
       </div>
     </div>
   </div>
@@ -15,8 +18,9 @@ export default {
         console.log(entries.length)
         entries.forEach((entry) => {
           if (!entry.isIntersecting && entry.target.getBoundingClientRect().x < 0) {
-            this.message = this.message.slice(1).concat(".");
-            this.translateX += 0.8;
+
+            this.translateX += -entry.target.getBoundingClientRect().x / 16;
+            this.message = this.message.slice(1).concat(" ");
             const letters = document.querySelectorAll(".letter")
             observer.observe(letters[letters.length - 1]);
           }
@@ -36,7 +40,7 @@ export default {
       message: "The quick brown fox jumps over the lazy dog is an English-language pangram—a sentence that contains all of the letters",
       interval: null,
       translateX: 0,
-      speed: 0.025,
+      speed: 0.05,
       observer: null,
     };
   },
@@ -47,9 +51,13 @@ export default {
     processedMessage() {
       return this.message.split("").map((char) => {
         if (char.match(/\s/g)) {
-          return "\xa0";
+          return {
+            img: require('@/assets/gifs/lightning.gif')
+          }
         }
-        return char;
+        return {
+          char: char
+        };
       });
     },
   },
@@ -67,8 +75,15 @@ export default {
   overflow: hidden;
 }
 
+.image {
+  min-width: 1rem;
+  width: 1rem;
+  min-height: 1rem;
+  height: 1rem;
+}
+
 .letter {
-  min-width: 0.8rem;
-  width: 0.8rem;
+  /* min-width: 0.8rem;
+  width: 0.8rem; */
 }
 </style>
