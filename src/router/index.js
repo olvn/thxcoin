@@ -68,8 +68,12 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   console.log(store.getters['User/currentUser'])
+  const unprotectedRoutes = [
+    "Login",
+    "Ticker"
+  ]
 
-  if (to.name !== "Login" && !store.getters["User/currentUser"])
+  if (!unprotectedRoutes.includes(to.name) && !store.getters["User/currentUser"])
     next({ name: "Login" });
   else next();
 });

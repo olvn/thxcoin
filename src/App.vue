@@ -40,8 +40,8 @@ export default {
       return !!this.$store.getters["User/currentUser"];
     },
     showNav() {
-      return [
-        'ticker'
+      return ![
+        'Ticker'
       ].includes(this.$route.name)
     }
   },

@@ -1,7 +1,7 @@
 export default {
   state: () => {
     return {
-      messageQueue: ['Initializing ticker. Please wait an appropriate amount of time for this text to go off screen. More messages will follow after this.'],
+      messageQueue: [],
     };
   },
   getters: {
@@ -24,8 +24,6 @@ export default {
       }
     },
     ADD_MESSAGE(state, payload) {
-      console.log("hmm");
-      console.log("cece", state.messageQueue);
       state.messageQueue.push(payload.message);
     }
   },
@@ -34,12 +32,12 @@ export default {
       let letter = context.getters["compositeString"][0];
       if (!letter) {
         letter = '\xa0';
-        context.commit('ADD_MESSAGE', { message: '\xa0\xa0\xa0\xa0\xa0\xa0 a new message. steve jobs wins olympic gold mdeal for eating pussy' })
+        context.commit('ADD_MESSAGE', { message: '\xa0\xa0' })
       }
       context.commit("POP_LETTER");
       return letter;
     },
-    createMessage: (context, message, username) => {
+    addMessage: (context, message, username) => {
       context.commit('ADD_MESSAGE', { message, username })
     }
   },

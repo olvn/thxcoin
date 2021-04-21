@@ -14,7 +14,7 @@
           placeholder="enter username"
           v-model="username"
         />
-        <button class="underline text-blue-800">login</button>
+        <button type="submit" class="underline text-blue-800">login</button>
       </form>
       <div v-if="errorText" class="flex bg-red-600 text-black">
         <img src="@/assets/gifs/warning1.gif" />

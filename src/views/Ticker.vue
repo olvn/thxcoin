@@ -15,18 +15,19 @@
   </div>
 </template>
 <script>
+import tickerService from '@/lib/tickerService'
+
 export default {
   mounted() {
-    this.message = this.$store.getters['Ticker/compositeString'];
+    tickerService.registerListeners();
+    this.message = 'Initializing ticker. Please wait an appropriate amount of time for this text to go off screen.';
     this.observer = new IntersectionObserver(
       (entries, observer) => {
-        console.log(entries.length)
         entries.forEach(async (entry) => {
           if (!entry.isIntersecting && entry.target.getBoundingClientRect().x < 0) {
 
             this.translateX += -entry.target.getBoundingClientRect().x / 16;
             let letter =  await this.$store.dispatch('Ticker/getNextLetter')
-            console.log('letter: ',letter)
             this.message = this.message.slice(1).concat(letter);
             const letters = document.querySelectorAll(".letter")
             observer.observe(letters[letters.length - 1]);
@@ -47,7 +48,7 @@ export default {
       message: "oof",
       interval: null,
       translateX: 0,
-      speed: 0.05,
+      speed: 0.075,
       observer: null,
     };
   },

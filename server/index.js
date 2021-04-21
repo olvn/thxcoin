@@ -54,6 +54,16 @@ io.on("connection", (socket) => {
     });
   });
 
+
+  socket.on("tickerMessage", ({ message }) => {
+    // todo approve via admin panel
+    io.emit("approvedTickerMessage", {
+      username: socket.username,
+      uuid: Date.now(),
+      message: message,
+    });
+  })
+
   socket.on('updateTotals', ({ coin, usd }) => {
     if (socket.username) {
       totals[socket.username] = {

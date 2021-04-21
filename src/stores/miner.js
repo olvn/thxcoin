@@ -99,7 +99,7 @@ export default {
     UPDATE_LEADERBOARD(state, leaders) {
       state.leaderboard = leaders;
     },
-    ADD_MESSAGE(state) {
+    ADD_TICKER_MESSAGE(state) {
       state.message = true;
     },
     ADD_UPGRADE(state) {
@@ -193,8 +193,8 @@ export default {
       }
       return false;
     },
-    createMessage(context) {
-      context.commit("ADD_MESSAGE");
+    createTickerMessagePermission(context) {
+      context.commit("ADD_TICKER_MESSAGE");
     },
     initState(context) {
       console.log(context);

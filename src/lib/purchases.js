@@ -49,7 +49,7 @@ const purchases = [
     2,
     "THX",
     async () => {
-      await store.dispatch("Miner/createMessage");
+      await store.dispatch("Miner/createTickerMessagePermission");
       router.push({ name: "Message" });
     }
   ),
