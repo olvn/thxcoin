@@ -1,6 +1,10 @@
 <template>
-  <div class="wrap ticker">
-    <div class="content flex" :style="transform">
+  <div class="wrap">
+    <div class="absolute white-grad z-50 h-full flex items-center p-8">
+      <img class="h-full bg-white" src="@/assets/gifs/thxcnn.png"/>
+      <div class="h-full w-64 white-grad"></div>
+    </div>
+    <div class="content absolute ticker flex items-center h-full" :style="transform">
       <div v-for="char in processedMessage" class="letter">
         <img v-if="char.img" :src="char.img" class="image"/>
         <span v-else>
@@ -13,14 +17,17 @@
 <script>
 export default {
   mounted() {
+    this.message = this.$store.getters['Ticker/compositeString'];
     this.observer = new IntersectionObserver(
       (entries, observer) => {
         console.log(entries.length)
-        entries.forEach((entry) => {
+        entries.forEach(async (entry) => {
           if (!entry.isIntersecting && entry.target.getBoundingClientRect().x < 0) {
 
             this.translateX += -entry.target.getBoundingClientRect().x / 16;
-            this.message = this.message.slice(1).concat(" ");
+            let letter =  await this.$store.dispatch('Ticker/getNextLetter')
+            console.log('letter: ',letter)
+            this.message = this.message.slice(1).concat(letter);
             const letters = document.querySelectorAll(".letter")
             observer.observe(letters[letters.length - 1]);
           }
@@ -37,7 +44,7 @@ export default {
   },
   data() {
     return {
-      message: "The quick brown fox jumps over the lazy dog is an English-language pangram—a sentence that contains all of the letters",
+      message: "oof",
       interval: null,
       translateX: 0,
       speed: 0.05,
@@ -48,11 +55,15 @@ export default {
     transform() {
       return `transform: translateX(${this.translateX}rem)`;
     },
+    messageString() {
+      return this.$store.getters['Ticker/compositeString']
+    },
     processedMessage() {
       return this.message.split("").map((char) => {
         if (char.match(/\s/g)) {
           return {
-            img: require('@/assets/gifs/lightning.gif')
+            // img: require('@/assets/gifs/lightning.gif')
+            char: '\xa0'
           }
         }
         return {
@@ -67,19 +78,17 @@ export default {
 };
 </script>
 <style scoped>
-.ticker {
-  /* font-family: "Courier New", Courier, monospace; */
-}
-
 .wrap {
   overflow: hidden;
 }
 
-.image {
-  min-width: 1rem;
-  width: 1rem;
-  min-height: 1rem;
-  height: 1rem;
+.white-grad {
+    background-image: linear-gradient(to left, rgba(255,255, 255,0), rgba(255, 255, 255,1));
+
+}
+
+.ticker {
+  font-size: 3rem;
 }
 
 .letter {

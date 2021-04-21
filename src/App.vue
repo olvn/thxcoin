@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav" v-if="isLoggedIn">
+    <div id="nav" v-if="isLoggedIn && showNav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
       <router-link to="/chat">
@@ -39,6 +39,11 @@ export default {
     isLoggedIn() {
       return !!this.$store.getters["User/currentUser"];
     },
+    showNav() {
+      return [
+        'ticker'
+      ].includes(this.$route.name)
+    }
   },
   beforeDestroy() {
     this.$store.dispatch("Miner/saveState");
@@ -59,11 +64,10 @@ export default {
    cursor: pointer;
  }
 
-body {
+/* body {
  background-image: url('~@/assets/clouds.png');
      background-repeat: repeat;
-
-}
+} */
 
 a {
   -moz-user-select: none;
