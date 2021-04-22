@@ -127,28 +127,9 @@
 </template>
 
 <script>
-import minerService from "@/lib/minerService";
 
 export default {
   name: "Miner",
-  mounted() {
-    this.totalUpdateInterval = setInterval(() => {
-      this.$store.dispatch(
-        "Miner/addCoinAmount",
-        (this.cps / 1000) * this.timerMs
-      );
-    }, this.timerMs);
-
-    this.transmissionInterval = setInterval(() => {
-      minerService.updateTotalCoin();
-    });
-  },
-  data() {
-    return {
-      timerMs: 50,
-      totalUpdateInterval: null,
-    };
-  },
   computed: {
     totalCoin() {
       return this.$store.getters["Miner/totalCoin"];

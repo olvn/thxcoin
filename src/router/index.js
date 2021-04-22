@@ -17,7 +17,7 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "login" */ "../views/Login.vue"),
     beforeEnter: (to, from, next) => {
-      console.log(!store.getters["User/currentUser"])
+      console.log(!store.getters["User/currentUser"]);
       if (!store.getters["User/currentUser"]) next();
       else next({ name: "Miner" });
     },
@@ -37,8 +37,16 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "chat" */ "../views/Chat.vue"),
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "chat" */ "../views/Chat.vue"),
+      import(/* webpackChunkName: "admin" */ "../views/Admin.vue"),
   },
   {
     path: "/ticker",
@@ -53,13 +61,33 @@ const routes = [
     path: "/message",
     name: "Message",
     component: () =>
-      import(/* webpackChunkName: "chat" */ "../views/Message.vue"),
+      import(/* webpackChunkName: "message" */ "../views/Message.vue"),
     beforeEnter: (to, from, next) => {
-      console.log(store.getters["Miner/canMessage"], "foo foo")
+      console.log(store.getters["Miner/canMessage"], "foo foo");
       if (store.getters["Miner/canMessage"]) next();
       else next({ name: "Miner" });
     },
-  }
+  },
+  {
+    path: "/picture",
+    name: "Picture",
+    component: () =>
+      import(/* webpackChunkName: "picture" */ "../views/Picture.vue"),
+    // beforeEnter: (to, from, next) => {
+    // if (store.getters["Miner/canMessage"]) next();
+    // else next({ name: "Miner" });
+    //
+  },
+  {
+    path: "/picture-background",
+    name: "PictureBackground",
+    component: () =>
+      import(/* webpackChunkName: "picture-background" */ "../views/PictureBackground.vue"),
+    // beforeEnter: (to, from, next) => {
+    // if (store.getters["Miner/canMessage"]) next();
+    // else next({ name: "Miner" });
+    // },
+  },
 ];
 
 const router = new VueRouter({
@@ -67,13 +95,13 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(store.getters['User/currentUser'])
-  const unprotectedRoutes = [
-    "Login",
-    "Ticker"
-  ]
+  console.log(store.getters["User/currentUser"]);
+  const unprotectedRoutes = ["Login", "Ticker", "PictureBackground"];
 
-  if (!unprotectedRoutes.includes(to.name) && !store.getters["User/currentUser"])
+  if (
+    !unprotectedRoutes.includes(to.name) &&
+    !store.getters["User/currentUser"]
+  )
     next({ name: "Login" });
   else next();
 });

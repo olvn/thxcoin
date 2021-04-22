@@ -24,7 +24,18 @@ export default {
     }
     chatService.registerListeners();
     minerService.registerListeners();
-    this.$store.dispatch("Miner/initState");
+    await this.$store.dispatch("Miner/initState");
+
+    this.totalUpdateInterval = setInterval(() => {
+      this.$store.dispatch(
+        "Miner/addCoinAmount",
+        (this.cps / 1000) * this.updateTimerMs
+      );
+    }, this.updateTimerMs);
+
+    this.transmissionInterval = setInterval(() => {
+      minerService.updateTotalCoin();
+    });
 
     this.saveInterval = setInterval(() => {
       this.$store.dispatch("Miner/saveState");
@@ -32,7 +43,9 @@ export default {
   },
   data() {
     return {
+      updateTimerMs: 50,
       saveInterval: null,
+      totalUpdateInterval: null
     };
   },
   computed: {
@@ -41,8 +54,12 @@ export default {
     },
     showNav() {
       return ![
-        'Ticker'
+        'Ticker',
+        'PictureBackground'
       ].includes(this.$route.name)
+    },
+    cps() {
+      return this.$store.getters["Miner/currentCps"];
     }
   },
   beforeDestroy() {

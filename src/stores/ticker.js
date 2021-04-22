@@ -1,87 +1,56 @@
 import tickerService from "@/lib/tickerService";
 
+const separator = Array(7).fill({ char: '\xa0'});
+
 export default {
   state: () => {
     return {
       messageQueue: [
-        [
-          { 
-            html: '<span class="text-red-800">nice</span>'
-          },
-          {
-            char: "i",
-          },
-          {
-            char: "n",
-          },
-          {
-            char: "i",
-          },
-          {
-            char: "t",
-          },
-        ],
+        { char: 'o'}
       ],
     };
   },
   getters: {
-    compositeString: (state) => {
-      return state.messageQueue.join(
-        Array(5)
-          .fill("\xa0")
-          .join()
-      );
+    messageQueue(state) {
+      return state.messageQueue;
     },
   },
   mutations: {
     POP_LETTER(state) {
-      console.log("boofdsdf outside", state.messageQueue.length);
       if (state.messageQueue.length > 0) {
-        console.log(
-          "boofdsdf insid",
-          state.messageQueue.length,
-          state.messageQueue[0].length
-        );
-
-        if (state.messageQueue[0].length > 0) {
-          state.messageQueue.splice(0, 1, state.messageQueue[0].splice(1));
-        } else {
-          state.messageQueue.splice(0, 1);
-        }
-        const characterMinimum = 100;
-
-        console.log("boofdsdf", state.messageQueue.length);
+        const characterMinimum = 30;
+        state.messageQueue.splice(0, 1);
         if (
-          state.messageQueue.length === 1 &&
-          state.messageQueue[0].length < characterMinimum
+          state.messageQueue.length < characterMinimum
         ) {
-          // add short random message
-          state.messageQueue.push(tickerService.stringToTickerArray(tickerService.randomMessage()));
+          state.messageQueue.push(
+            ...separator,
+            ...tickerService.randomMessage()
+          );
         }
       }
     },
     ADD_MESSAGE(state, { username, message }) {
-      console.log("add msg")
-      state.messageQueue.push({
-        html: `<span class="text-blue-800">${username}</span>`
-      });
-      state.messageQueue.push(tickerService.stringToTickerArray(message));
+      console.log('boooo', username)
+      console.log("add msg");
+      state.messageQueue.push(
+        ...separator,
+        {
+          html: `<span class="text-blue-800">${username}</span>:&nbsp`,
+        },
+        ...tickerService.stringToTickerArray(message),
+      );
+      state.messageQueue.push();
     },
   },
   actions: {
-    getNextLetter: (context) => {
-      console.log('deedaa')
-      let letter = context.getters["compositeString"][0];
-      if (!letter) {
-        letter = "\xa0";
-        context.commit("ADD_MESSAGE", {
-          message: "",
-        });
-      }
-      context.commit("POP_LETTER");
-      return letter;
+    getNextLetter: async (context) => {
+      let letter = (context.state.messageQueue[0]);
+      await context.commit("POP_LETTER");
+      return letter || '\xa0';
     },
-    addMessage: (context, message, username) => {
+    addMessage: (context, { message, username }) => {
+      console.log('booo', username)
       context.commit("ADD_MESSAGE", {
         message,
         username,

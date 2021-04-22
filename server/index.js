@@ -19,7 +19,7 @@ const io = sio(server, {
 // });
 
 const registeredUsers = new Set();
-const totals = {}
+const totals = {};
 
 io.use((socket, next) => {
   const username = socket.handshake.auth.username;
@@ -40,8 +40,7 @@ io.on("connection", (socket) => {
     } else {
       callback({
         success: false,
-        reason:
-          "USER ALREADY EXISTS.",
+        reason: "USER ALREADY EXISTS.",
       });
     }
   });
@@ -54,26 +53,45 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on('pictureBackground', ({ imageUrl }) => {
+    io.emit("unapprovedItem", {
+      username: socket.username,
+      uuid: Date.now(),
+      type: 'picture',
+      imageUrl
+    })
+  });
 
   socket.on("tickerMessage", ({ message }) => {
     // todo approve via admin panel
-    io.emit("approvedTickerMessage", {
+    io.emit("unapprovedItem", {
       username: socket.username,
       uuid: Date.now(),
       message: message,
+      type: 'ticker',
     });
-  })
+  });
 
-  socket.on('updateTotals', ({ coin, usd }) => {
+  socket.on("approveItem", (payload) => {
+    if (payload.type === "ticker") {
+      io.emit("approvedTickerMessage", payload);
+    }
+    else if (payload.type === 'picture') {
+      io.emit("approvedPicture", payload);
+    }
+  });
+
+  socket.on("updateTotals", ({ coin, usd }) => {
     if (socket.username) {
       totals[socket.username] = {
-        coin, usd
+        coin,
+        usd,
       };
     }
   });
 
   setInterval(() => {
-    socket.emit('updateGlobalTotals', totals);
+    socket.emit("updateGlobalTotals", totals);
   }, 1000);
 
   socket.on("disconnect", () => {
