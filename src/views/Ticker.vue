@@ -20,12 +20,14 @@ import tickerService from '@/lib/tickerService'
 export default {
   mounted() {
     tickerService.registerListeners();
-    this.message = 'Initializing ticker. Please wait an appropriate amount of time for this text to go off screen.';
+    this.message = tickerService.stringToTickerArray('Initializing ticker. Please wait an appropriate amount of time for this text to go off screen.');
     this.observer = new IntersectionObserver(
       (entries, observer) => {
+        console.log('pobservering')
         entries.forEach(async (entry) => {
+          console.log("not called...")
           if (!entry.isIntersecting && entry.target.getBoundingClientRect().x < 0) {
-
+            observer.unobserve(entry);
             this.translateX += -entry.target.getBoundingClientRect().x / 16;
             let letter =  await this.$store.dispatch('Ticker/getNextLetter')
             this.message = this.message.slice(1).concat(letter);
@@ -45,7 +47,7 @@ export default {
   },
   data() {
     return {
-      message: "oof",
+      message: [],
       interval: null,
       translateX: 0,
       speed: 0.075,
@@ -56,20 +58,15 @@ export default {
     transform() {
       return `transform: translateX(${this.translateX}rem)`;
     },
-    messageString() {
-      return this.$store.getters['Ticker/compositeString']
-    },
-    processedMessage() {
-      return this.message.split("").map((char) => {
-        if (char.match(/\s/g)) {
+     processedMessage() {
+      return this.message.map((m) => {
+        if (m.char.match(/\s/g)) {
           return {
             // img: require('@/assets/gifs/lightning.gif')
             char: '\xa0'
           }
         }
-        return {
-          char: char
-        };
+        return m;
       });
     },
   },
