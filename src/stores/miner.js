@@ -16,15 +16,18 @@ export default {
   state: () => {
     return {
       message: false,
+      picture: false,
       totalCoin: 0,
       lifetimeCoin: 0,
       highCoin: 0,
-      totalUsd: 100,
-      lifetimeUsd: 100,
+      totalUsd: 0,
+      lifetimeUsd: 0,
       exchangeRate: 10,
-      highUsd: 100,
+      highUsd: 0,
       clickWorth: 0.001,
       leaderboard: {},
+      efficiency: 1.01,
+      autosell: false,
       upgrades: upgrades,
       purchases: purchases,
     };
@@ -52,10 +55,15 @@ export default {
       return state.leaderboard;
     },
     currentCps: (state) => {
-      return Object.values(state.upgrades).reduce((acc, upgrade) => {
-        acc += upgrade.cps * upgrade.numPurchased;
-        return acc;
-      }, 0);
+      return (
+        Object.values(state.upgrades).reduce((acc, upgrade) => {
+          acc += upgrade.cps * upgrade.numPurchased;
+          return acc;
+        }, 0) * state.efficiency
+      );
+    },
+    efficiency: (state) => {
+      return state.efficiency;
     },
     clickWorth: (state) => {
       return state.clickWorth;
@@ -69,10 +77,29 @@ export default {
     },
     availablePurchases: (state) => {
       const purchases = Object.values(state.purchases);
-      return purchases.filter((u) => u.cost() <= state.highUsd);
+      const hasAutominers = Object.values(state.upgrades).some(
+        (it) => it.numPurchased > 0
+      );
+
+      return purchases.filter((u) => {
+        if (!u.inStock() || (u.requiresAutominer && !hasAutominers)) {
+          return false;
+        }
+        if (u.currency === "USD") {
+          return u.cost() <= state.highUsd;
+        } else {
+          return u.cost() <= state.highCoin;
+        }
+      });
     },
     canMessage: (state) => {
       return state.message;
+    },
+    canPicture: (state) => {
+      return state.picture;
+    },
+    shouldAutosell: (state) => {
+      return state.autosell;
     }
   },
   mutations: {
@@ -102,21 +129,52 @@ export default {
     ADD_TICKER_MESSAGE(state) {
       state.message = true;
     },
+    ADD_PICTURE(state) {
+      state.picture = true;
+    },
     ADD_UPGRADE(state) {
       localStorage.setItem("minerState", JSON.stringify(state));
     },
     ADD_PURCHASE(state) {
       localStorage.setItem("minerState", JSON.stringify(state));
     },
+    INCREASE_EFFICIENCY(state, amount) {
+      state.efficiency += amount;
+    },
+    ADD_CLICK_WORTH(state, worth) {
+      state.clickWorth += worth;
+    },
+    AUTOSELL(state) {
+      state.autosell = true;
+    },
     LOAD_STATE(
       state,
-      { totalCoin, lifetimeCoin, highCoin, totalUsd, upgrades, message }
+      {
+        totalCoin,
+        lifetimeCoin,
+        highCoin,
+        totalUsd,
+        highUsd,
+        lifetimeUsd,
+        upgrades,
+        purchases,
+        exchangeRate,
+        clickWorth,
+        efficiency,
+        autosell
+      }
     ) {
       state.totalCoin = totalCoin || 0;
       state.lifetimeCoin = lifetimeCoin || 0;
       state.highCoin = highCoin || 0;
       state.totalUsd = totalUsd || 0;
-      state.message = message || false;
+      state.highUsd = highUsd || 0;
+      state.lifetimeUsd = lifetimeUsd || 0;
+      state.exchangeRate = exchangeRate || 0;
+      state.clickWorth = clickWorth;
+      state.efficiency = efficiency;
+      state.autosell = autosell;
+
       for (let key of Object.keys(upgrades)) {
         if (state.upgrades[key]) {
           state.upgrades[key].numPurchased = upgrades[key].numPurchased || 0;
@@ -127,9 +185,20 @@ export default {
           console.log(key, "not found in state, discarding`");
         }
       }
+
+      for (let key of Object.keys(purchases)) {
+        if (state.purchases[key]) {
+          state.purchases[key].numPurchased = purchases[key].numPurchased || 0;
+          state.purchases[key].inflationDivisor =
+            purchases[key].inflationDivisor ||
+            state.purchases[key].inflationDivisor;
+        } else {
+          console.log(key, "not found in state, discarding`");
+        }
+      }
     },
     SAVE_STATE(state) {
-      console.log(state);
+      console.log('boop', JSON.stringify(state));
       localStorage.setItem("minerState", JSON.stringify(state));
     },
   },
@@ -196,13 +265,27 @@ export default {
     createTickerMessagePermission(context) {
       context.commit("ADD_TICKER_MESSAGE");
     },
+    createPicturePermission(context) {
+      context.commit("ADD_PICTURE");
+    },
+    increaseEfficiency(context, amount) {
+      context.commit("INCREASE_EFFICIENCY", amount);
+    },
+    addClickWorth(context, worth) {
+      context.commit("ADD_CLICK_WORTH", worth);
+    },
+    setExchangeRate(context, rate) {
+      context.commit("SET_EXCHANGE_RATE", rate);
+    },
+    autosell(context) {
+      context.commit("AUTOSELL")
+    },
     initState(context) {
-      console.log(context);
-      // if (localStorage.getItem("minerState")) {
-      //   console.log("loading old state...");
-      //   const oldState = JSON.parse(localStorage.getItem("minerState"));
-      //   context.commit("LOAD_STATE", oldState);
-      // }
+      if (localStorage.getItem("minerState")) {
+        console.log("loading old state...");
+        const oldState = JSON.parse(localStorage.getItem("minerState"));
+        context.commit("LOAD_STATE", oldState);
+      }
     },
     saveState(context) {
       console.log("saving state");

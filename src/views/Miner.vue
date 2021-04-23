@@ -4,7 +4,7 @@
       <a
         @click="mineCoin"
         class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
-        >MINE {{ clickWorth }} $THX</a
+        >MINE {{ clickWorth.toFixed(3) }} $THX</a
       >
       <a
         @click="sellCoin"
@@ -35,99 +35,96 @@
         </div>
       </div>
       <div class="w-1/3">
-        <div>25334</div>
+        <div>{{ (efficiency - 1.0).toFixed(2) }}</div>
         <div>
           <img class="w-6 h-6 inline" src="@/assets/gifs/lightning.gif" />
-          MW/s
+          % Efficiency
         </div>
       </div>
     </div>
-
-    <div
-      :key="purchase.name"
-      v-for="purchase in purchases"
-      class="flex items-center bg-white m-2 p-2"
-    >
-      <img class="w-12 h-12" src="@/assets/gifs/email1.gif" />
-      <div class="flex-grow">
-        <div>
-          {{ purchase.name }}
-        </div>
-        <div class="text-xs">{{ purchase.description }}</div>
-      </div>
-      <div class="text-center">
-        <div
-          :class="{ invisible: (purchase.currency === 'USD' 
-          ? (purchase.cost() <= totalUsd) 
-          : (purchase.cost() <= totalCoin)
-        )}"
-          class="font-bold text-red-600 text-xs"
-        >
-          can't afford
-        </div>
-        <a>
-          <div
-            class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
-            v-bind:class="{
-              'bg-gray-300 text-gray-400': purchase.cost() > totalUsd,
-            }"
-            @click="buyPurchase(purchase)"
-          >
-          <span v-if="purchase.currency === 'USD'">
-            $THX 
-          </span>
-          <span v-else>
-            ${{ purchase.cost().toFixed(2) }}
-          </span>
+    <transition-group name="slide-fade">
+      <div
+        :key="purchase.name"
+        v-for="purchase in purchases"
+        class="flex items-center bg-white m-2 p-2 slide-fade-item"
+      >
+        <img class="w-12 h-12" :src="purchase.icon" />
+        <div class="flex-grow">
+          <div>
+            {{ purchase.name }}
           </div>
-        </a>
-
-        <div class="text-xs">owned: {{ purchase.numPurchased }}</div>
-      </div>
-    </div>
-
-    <div
-      :key="upgrade.name"
-      v-for="upgrade in upgrades"
-      class="flex items-center bg-white m-2 p-2"
-    >
-      <img class="w-12 h-12" src="@/assets/gifs/email1.gif" />
-      <div class="flex-grow">
-        <div>
-          {{ upgrade.name }}
-          <span class="text-xs text-green-500">+{{ upgrade.cps }} $THX/s</span>
+          <div class="text-xs">{{ purchase.description }}</div>
         </div>
-        <div class="text-xs">{{ upgrade.description }}</div>
-      </div>
-      <div class="text-center">
-        <div
-          :class="{ invisible: upgrade.cost() <= totalUsd }"
-          class="font-bold text-red-600 text-xs"
-        >
-          can't afford
-        </div>
-        <a>
+        <div class="text-center">
           <div
-            class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
-            v-bind:class="{
-              'bg-gray-300 text-gray-400': upgrade.cost() > totalUsd,
-            }"
-            @click="buyUpgrade(upgrade)"
+            :class="{ invisible: sufficientFunds(purchase) }"
+            class="font-bold text-red-600 text-xs"
           >
-            ${{ upgrade.cost().toFixed(2) }}
+            can't afford
           </div>
-        </a>
+          <a>
+            <div
+              class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+              v-bind:class="{
+                'bg-gray-300 text-gray-400': !sufficientFunds(purchase),
+              }"
+              @click="buyPurchase(purchase)"
+            >
+              <span v-if="purchase.currency !== 'USD'">
+                THX {{ purchase.cost().toFixed(3) }}
+              </span>
+              <span v-else> ${{ purchase.cost().toFixed(2) }} </span>
+            </div>
+          </a>
 
-        <div class="text-xs">owned: {{ upgrade.numPurchased }}</div>
+          <div class="text-xs">owned: {{ purchase.numPurchased }}</div>
+        </div>
       </div>
-    </div>
+
+      <div
+        :key="upgrade.name"
+        v-for="upgrade in upgrades"
+        class="flex items-center bg-white m-2 p-2"
+      >
+        <img class="w-12 h-12" :src="upgrade.icon" />
+        <div class="flex-grow">
+          <div>
+            {{ upgrade.name }}
+            <span class="text-xs text-green-500"
+              >+{{ upgrade.cps }} $THX/s</span
+            >
+          </div>
+          <div class="text-xs">{{ upgrade.description }}</div>
+        </div>
+        <div class="text-center">
+          <div
+            :class="{ invisible: sufficientFunds(upgrade) }"
+            class="font-bold text-red-600 text-xs"
+          >
+            can't afford
+          </div>
+          <a>
+            <div
+              class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+              v-bind:class="{
+                'bg-gray-300 text-gray-400': !sufficientFunds(upgrade),
+              }"
+              @click="buyUpgrade(upgrade)"
+            >
+              ${{ upgrade.cost().toFixed(2) }}
+            </div>
+          </a>
+
+          <div class="text-xs">owned: {{ upgrade.numPurchased }}</div>
+        </div>
+      </div>
+    </transition-group>
     {{ cps }}
     <a @click="$store.dispatch('Miner/initState')">ok </a>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "Miner",
   computed: {
@@ -161,6 +158,9 @@ export default {
     purchases() {
       return this.$store.getters["Miner/availablePurchases"];
     },
+    efficiency() {
+      return this.$store.getters["Miner/efficiency"];
+    },
   },
   methods: {
     mineCoin() {
@@ -173,8 +173,19 @@ export default {
       await this.$store.dispatch("Miner/buyUpgrade", upgrade);
     },
     async buyPurchase(purchase) {
-      console.log(purchase);
       await this.$store.dispatch("Miner/buyPurchase", purchase);
+    },
+    sufficientFunds(item) {
+      if (item.currency === "THX") {
+        if (this.totalCoin >= item.cost()) {
+          return true;
+        }
+      } else {
+        if (this.totalUsd >= item.cost()) {
+          return true;
+        }
+      }
+      return false;
     },
   },
   beforeDestroy() {
@@ -182,5 +193,12 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style>
+body {
+  background-image: url("~@/assets/clouds.png");
+  background-repeat: repeat;
+}
+.box {
+  animation: expand 0.5s ease-in-out;
+}
 </style>

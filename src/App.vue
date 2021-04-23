@@ -1,10 +1,13 @@
 <template>
   <div id="app">
-    <div id="nav" v-if="isLoggedIn && showNav">
-      <router-link to="/">Home</router-link> |
+    <div id="nav" class="flex justify-between" v-if="isLoggedIn && showNav">
+      <router-link to="/">Home</router-link>
       <router-link to="/about">About</router-link>
       <router-link to="/chat">
-      <img src="@/assets/gifs/email3.gif"/>
+      <div class="p-2">
+        <img class="w-8" src="@/assets/icons/aim.png"/>
+        <div v-if="unreadCount" class="p-1 top-8 text-xs right-2 absolute bg-red-500 text-white rounded-lg">{{ unreadCount }}</div>
+      </div>
       </router-link>
     </div>
     <router-view />
@@ -31,6 +34,9 @@ export default {
         "Miner/addCoinAmount",
         (this.cps / 1000) * this.updateTimerMs
       );
+      if (this.$store.getters['Miner/shouldAutosell'] && this.$store.getters['Miner/totalCoin'] > 5) {
+        this.$store.dispatch('Miner/sellCoinForUsd', this.$store.getters['Miner/cps'] * this.updateTimerMs / 1000 / 10);
+      }
     }, this.updateTimerMs);
 
     this.transmissionInterval = setInterval(() => {
@@ -60,6 +66,13 @@ export default {
     },
     cps() {
       return this.$store.getters["Miner/currentCps"];
+    },
+    unreadCount() {
+      const count = this.$store.getters["Chat/unreadCount"];
+      if (count > 99) {
+        return '99+'
+      }
+      return count;
     }
   },
   beforeDestroy() {

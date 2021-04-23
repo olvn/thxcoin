@@ -25,12 +25,20 @@ export default {
       return this.$store.getters["Chat/messages"];
     },
   },
+  watch: {
+    messages() {
+      this.$store.dispatch('Chat/markRead');
+    }
+  },
   methods: {
     onSubmit() {
       chatService.sendMessage(this.input)
 
       this.input = "";
     },
+  },
+  mounted() {
+    this.$store.dispatch('Chat/markRead');
   },
   components: {},
 };

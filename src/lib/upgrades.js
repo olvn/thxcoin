@@ -1,11 +1,13 @@
 class Upgrade {
-  constructor(name, description, baseCost, cps, continuous = true) {
+  constructor(name, description, baseCost, cps, icon=require("@/assets/icons/broken.jpg"), continuous = true) {
     this.name = name;
     this.description = description;
     this.baseCost = baseCost;
     this.cps = cps;
     this.continuous = continuous;
     this.numPurchased = 0;
+    this.icon = icon;
+    this.currency = "USD";
     this.inflationDivisor = 1000.0;
   }
 
@@ -33,31 +35,29 @@ const upgrades = [
     "Pentium 3",
     "An aging slab of silicon, but can solve some hashes in a pinch.",
     5.0,
-    0.00001010101
+    0.1010101,
+    require("@/assets/icons/pentium.jpg")
   ),
   new Upgrade(
     "Repurposed Bitcoin ASIC",
     "Dedicated chip just for solving hashes, stripped from an abandoned PRC mining warehouse. Should help.",
     100.0,
-    0.01
-  ),
-  new Upgrade(
-    "macbiook air",
-    "Dedicated chip just for solving hashes, stripped from an abandoned PRC mining warehouse. Should help.",
-    100.0,
-    0.055555
+    0.1,
+    require("@/assets/icons/asic.jpg")
   ),
   new Upgrade(
     "RTX 4090",
-    "Fortnite 12fps basically unplayable.",
-    100.0,
-    1.0
+    "Unreleased NVIDIA card. Does Fortnite at 12fps, basically unplayable. Just use it to mine some coin.",
+    1000.0,
+    1.0,
+    require("@/assets/icons/rtx4090.jpg")
   ),
   new Upgrade(
-    "Big Pussy",
-    "Fortnite 12fps basically unplayable.",
-    5000.0,
-    0.00101010101
+    "Specialized $THX ASIC",
+    "CPU architect Fromm Lesche designed $THX ASIC. Dramatic improvement over unspecialized ASIC.",
+    10000.0,
+    2,
+    require("@/assets/icons/asic.jpg")
   ),
 ];
 

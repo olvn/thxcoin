@@ -38,8 +38,9 @@ export default {
         console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
 
         socket.emit('pictureBackground', { imageUrl: await imageCompression.getDataUrlFromFile(compressedFile)})
-        console.log(await imageCompression.getDataUrlFromFile(compressedFile))
-        // await uploadToServer(compressedFile); // write your own logic
+
+        // todo: success snackbar global
+        this.$router.push({ name: 'Miner' })
       } catch (error) {
         this.errorText = "an unexpected error occurred. soryr. im so bad at this."
         console.log(error);

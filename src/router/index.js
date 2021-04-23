@@ -73,20 +73,18 @@ const routes = [
     name: "Picture",
     component: () =>
       import(/* webpackChunkName: "picture" */ "../views/Picture.vue"),
-    // beforeEnter: (to, from, next) => {
-    // if (store.getters["Miner/canMessage"]) next();
-    // else next({ name: "Miner" });
-    //
+    beforeEnter: (to, from, next) => {
+      if (store.getters["Miner/canPicture"]) next();
+      else next({ name: "Miner" });
+    },
   },
   {
     path: "/picture-background",
     name: "PictureBackground",
     component: () =>
-      import(/* webpackChunkName: "picture-background" */ "../views/PictureBackground.vue"),
-    // beforeEnter: (to, from, next) => {
-    // if (store.getters["Miner/canMessage"]) next();
-    // else next({ name: "Miner" });
-    // },
+      import(
+        /* webpackChunkName: "picture-background" */ "../views/PictureBackground.vue"
+      ),
   },
 ];
 
