@@ -6,7 +6,7 @@
       :key="image.deathTime"
       class="fader"
     >
-      <img class="w-64 h-64" :src="image.url" />
+      <img class="w-72" :src="image.url" />
     </div>
   </div>
 </template>
@@ -18,7 +18,6 @@ export default {
     this.interval = setInterval(() => {
       const currentTime = new Date().getTime();
 
-      console.log(this.images);
       this.images = this.images.filter((image) => {
         return image.deathTime > currentTime;
       });
@@ -42,7 +41,7 @@ export default {
     return {
       images: [],
       imageUrl: null,
-      secondsToLive: 10000,
+      secondsToLive: 5,
       interval: null,
     };
   },
@@ -61,8 +60,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style >
 .fader {
-  transition: visibility 0s 2s, opacity 2s linear;
+    animation: spin 5s linear, fadeOut 5s;
+    animation-iteration-count: 1;
+    opacity: 0;
 }
+@keyframes fadeOut {
+   0% {opacity: 1;}
+   100% {opacity: 0;} 
+} 
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 </style>
