@@ -1,4 +1,4 @@
-npm run build -- --mode=production
+# npm run build -- --mode=production
 git add server/dist
 git commit -m "new build"
 git subtree push --prefix server heroku master
