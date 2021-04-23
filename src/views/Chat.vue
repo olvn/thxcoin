@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 h-screen flex flex-col justify-center">
-    <img class="w-16 h-16" src="@/assets/gifs/back.gif"/> click above to go back to mining...
+    <img class="w-16 h-16" src="@/assets/gifs/back.gif" @click="goBack"/> click above to go back to mining...
     <div class="h-5/6 flex flex-col justify-end bg-white">
       <div v-for="msg in messages" :key="msg.uuid">
         <span class="text-green-600 font-bold">{{ msg.username }}:</span>
@@ -47,6 +47,9 @@ export default {
         this.input = "";
       }
     },
+    goBack() {
+      this.$router.push({ name: 'Miner'});
+    }
   },
   mounted() {
     this.$store.dispatch("Chat/markRead");
