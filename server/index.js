@@ -16,7 +16,9 @@ const io = sio(server, {
 
 console.log('env:', process.env.NODE_ENV)
 var forceSsl = function(req, res, next) {
+    console.log("protocol", req.headers["x-forwarded-proto"]);
   if (req.headers["x-forwarded-proto"] !== "https") {
+    console.log("attempting forward")
     return res.redirect(["https://", req.get("Host"), req.url].join(""));
   }
   return next();
