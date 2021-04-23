@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-      message: tickerService.stringToTickerArray(Array(3).fill("Initializing ticker.").join(' ')),
+      message: tickerService.stringToTickerArray(Array(6).fill("Initializing ticker.").join(' ')),
       interval: null,
       translateX: 0,
       speed: 0.075,
