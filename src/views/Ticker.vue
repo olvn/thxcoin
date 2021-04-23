@@ -23,6 +23,7 @@ import tickerService from "@/lib/tickerService";
 
 export default {
   mounted() {
+    document.body.style.backgroundImage = "none";
     tickerService.registerListeners();
     this.observer = new IntersectionObserver(
       (entries, observer) => {
