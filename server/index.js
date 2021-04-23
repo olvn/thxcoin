@@ -22,11 +22,9 @@ var forceSsl = function(req, res, next) {
   return next();
 };
 
-app.configure(function() {
   if (process.env.NODE_ENV === "production") {
     app.use(forceSsl);
   }
-});
 
 const registeredUsers = new Set();
 const totals = {};
