@@ -1,11 +1,15 @@
 <template>
-  <div>
-    hey
-    <div v-for="msg in messages" :key="msg.uuid">{{msg.username }}: {{ msg.content }}</div>
+<div class="p-4 h-screen flex flex-col justify-center">
+  CHAT
+  <div class="h-5/6 flex flex-col justify-end bg-white">
+    <div v-for="msg in messages" :key="msg.uuid">
+      <span class="text-green-600 font-bold">{{msg.username }}:</span> {{ msg.content }}
+    </div>
     <form @submit.prevent="onSubmit" class="form">
-      <input v-model="input" placeholder="Your message..."/>
-      <button>Send</button>
+      <input class="w-5/6" v-model="input" placeholder="Your message..."/>
+      <button class="w-1/6 bg-gray-200 border-r border-b px-1 border-black">Send</button>
     </form>
+    </div>
   </div>
 </template>
 

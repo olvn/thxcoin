@@ -34,8 +34,9 @@ export default {
         "Miner/addCoinAmount",
         (this.cps / 1000) * this.updateTimerMs
       );
+
       if (this.$store.getters['Miner/shouldAutosell'] && this.$store.getters['Miner/totalCoin'] > 5) {
-        this.$store.dispatch('Miner/sellCoinForUsd', this.$store.getters['Miner/cps'] * this.updateTimerMs / 1000 / 10);
+        this.$store.dispatch('Miner/sellCoinForUsd', this.$store.getters['Miner/currentCps'] * this.updateTimerMs / 1000.0 / 10.0);
       }
     }, this.updateTimerMs);
 
@@ -61,7 +62,8 @@ export default {
     showNav() {
       return ![
         'Ticker',
-        'PictureBackground'
+        'PictureBackground',
+        'Chat'
       ].includes(this.$route.name)
     },
     cps() {
