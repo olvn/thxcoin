@@ -4,6 +4,7 @@
       v-for="image in images"
       :style="translate(image)"
       :key="image.deathTime"
+      class="fader"
     >
       <img class="w-64 h-64" :src="image.url" />
     </div>
@@ -59,3 +60,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.fader {
+  transition: visibility 0s 2s, opacity 2s linear;
+}
+</style>
