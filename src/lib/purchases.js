@@ -109,13 +109,14 @@ const purchases = [
     name: "Ticker message",
     description:
       "Buy this and you can write a message that will scroll across the bottom of the stream.",
-    baseCost: 3,
+    baseCost: 2,
     currency: "THX",
     special: true,
     cbAction: async () => {
       await store.dispatch("Miner/createTickerMessagePermission");
       router.push({ name: "Message" });
     },
+    icon: require("@/assets/icons/ticker.jpg"),
   }),
   new StreamPurchase({
     name: "Picture on the Green Screen",
@@ -128,6 +129,7 @@ const purchases = [
       await store.dispatch("Miner/createPicturePermission");
       router.push({ name: "Picture" });
     },
+    icon: require("@/assets/icons/gspic.png"),
   }),
   new Purchase({
     name: "Repurposed Peloton bike generator",
@@ -140,21 +142,7 @@ const purchases = [
       store.dispatch("Miner/increaseEfficiency", efficiencyIncrease);
     },
     qty: 1,
-    icon: require("@/assets/icons/grubribe.png"),
-    requiresAutominer: true
-  }),
-  new Purchase({
-    name: "Bribe GRU employee.",
-    description:
-      "He'll remove the governor on your power meter, giving you a few more MW/s. Increases efficiency 20%.",
-    baseCost: 500,
-    currency: "USD",
-    cbAction: async () => {
-      const efficiencyIncrease = .10;
-      store.dispatch("Miner/increaseEfficiency", efficiencyIncrease);
-    },
-    qty: 1,
-    icon: require("@/assets/icons/grubribe.png"),
+    icon: require("@/assets/icons/peloton.png"),
     requiresAutominer: true
   }),
   new Purchase({
@@ -175,13 +163,13 @@ const purchases = [
     name: "Hedgefund Bro Investment Manager",
     description:
       "You wouldn't want to spend more than 5 minutes with him, but he's got this algorithm that will sell your $THX at just the right time.",
-    baseCost: 0.1,
+    baseCost: 1000,
     currency: "USD",
     cbAction: async () => {
       store.dispatch("Miner/autosell");
     },
     qty: 1,
-    // icon: require("@/assets/icons/grubribe.png"),
+    icon: require("@/assets/icons/shrekli.jpeg"),
     requiresAutominer: true
   }),
   new Purchase({
@@ -195,28 +183,28 @@ const purchases = [
       store.dispatch("Miner/increaseEfficiency", efficiencyIncrease);
     },
     qty: 9999999,
-    icon: require("@/assets/icons/grubribe.png"),
+    icon: require("@/assets/icons/panel.jpg"),
     requiresAutominer: true
   }),
   new Purchase({
     name: "Hydrofarm",
     description:
       "An undersea turbine system just to help you get some coin. +200% efficiency.",
-    baseCost: 9999999,
+    baseCost: 999999,
     currency: "USD",
     cbAction: async () => {
-      const efficiencyIncrease = 1;
+      const efficiencyIncrease = 2;
       store.dispatch("Miner/increaseEfficiency", efficiencyIncrease);
     },
     qty: 100,
-    icon: require("@/assets/icons/grubribe.png"),
+    icon: require("@/assets/icons/turbine.jpg"),
     requiresAutominer: true
   }),
   new Purchase({
     name: "Power grid for Estonia",
     description:
       "Take over this Eastern European country and increase your mining power 400%.",
-    baseCost: 100000,
+    baseCost: 1000000,
     currency: "USD",
     cbAction: async () => {
       const efficiencyIncrease = 4;

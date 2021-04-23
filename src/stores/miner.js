@@ -100,7 +100,7 @@ export default {
     },
     shouldAutosell: (state) => {
       return state.autosell;
-    }
+    },
   },
   mutations: {
     ADD_COIN_AMOUNT(state, amount) {
@@ -161,7 +161,7 @@ export default {
         exchangeRate,
         clickWorth,
         efficiency,
-        autosell
+        autosell,
       }
     ) {
       state.totalCoin = totalCoin || 0;
@@ -198,7 +198,8 @@ export default {
       }
     },
     SAVE_STATE(state) {
-      // localStorage.setItem("minerState", JSON.stringify(state));
+      localStorage.setItem("minerState", JSON.stringify(state));
+      localStorage.setItem("loadedBefore", true);
     },
   },
   actions: {
@@ -277,13 +278,15 @@ export default {
       context.commit("SET_EXCHANGE_RATE", rate);
     },
     autosell(context) {
-      context.commit("AUTOSELL")
+      context.commit("AUTOSELL");
     },
     initState(context) {
       if (localStorage.getItem("minerState")) {
-        console.log("loading old state...");
-        const oldState = JSON.parse(localStorage.getItem("minerState"));
-        context.commit("LOAD_STATE", oldState);
+        if (localStorage.getItem("loadedBefore")) {
+          console.log("loading old state...");
+          const oldState = JSON.parse(localStorage.getItem("minerState"));
+          context.commit("LOAD_STATE", oldState);
+        }
       }
     },
     saveState(context) {
