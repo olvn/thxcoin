@@ -14,9 +14,19 @@ const io = sio(server, {
   },
 });
 
-// app.get("*", (req, res) => {
-//   res.sendfile(path.dirname('../dist/index.html'));
-// });
+console.log('env:', process.env.NODE_ENV)
+var forceSsl = function(req, res, next) {
+  if (req.headers["x-forwarded-proto"] !== "https") {
+    return res.redirect(["https://", req.get("Host"), req.url].join(""));
+  }
+  return next();
+};
+
+app.configure(function() {
+  if (process.env.NODE_ENV === "production") {
+    app.use(forceSsl);
+  }
+});
 
 const registeredUsers = new Set();
 const totals = {};
@@ -53,13 +63,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('pictureBackground', ({ imageUrl }) => {
+  socket.on("pictureBackground", ({ imageUrl }) => {
     io.emit("unapprovedItem", {
       username: socket.username,
       uuid: Date.now(),
-      type: 'picture',
-      imageUrl
-    })
+      type: "picture",
+      imageUrl,
+    });
   });
 
   socket.on("tickerMessage", ({ message }) => {
@@ -68,15 +78,14 @@ io.on("connection", (socket) => {
       username: socket.username,
       uuid: Date.now(),
       message: message,
-      type: 'ticker',
+      type: "ticker",
     });
   });
 
   socket.on("approveItem", (payload) => {
     if (payload.type === "ticker") {
       io.emit("approvedTickerMessage", payload);
-    }
-    else if (payload.type === 'picture') {
+    } else if (payload.type === "picture") {
       io.emit("approvedPicture", payload);
     }
   });

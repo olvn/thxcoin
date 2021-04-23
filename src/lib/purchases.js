@@ -11,7 +11,7 @@ class Purchase {
     qty = 999999,
     icon = require("@/assets/icons/broken.jpg"),
     inflates = true,
-    inflationDivisor = 1.0,
+    inflationDivisor = 10.0,
     requiresAutominer = false
   }) {
     this.name = name;
@@ -51,6 +51,21 @@ class Purchase {
   }
 }
 
+class StreamPurchase extends Purchase {
+  constructor(arg) {
+    super(arg);
+    this.adjustedCost = arg.baseCost;
+  }
+  cost() {
+    return this.adjustedCost;
+  }
+  buy() {
+    this.numPurchased += 1;
+    this.adjustedCost = store.getters['Miner/totalCoin'] / 2 + store.getters['Miner/currentCps'] * 90;
+    console.log("cost", this.adjustedCost);
+  }
+}
+
 const purchases = [
   new Purchase({
     name: "Coffee",
@@ -68,7 +83,7 @@ const purchases = [
     name: "Pen & Paper",
     description:
       "Solve your mining hashes in a fraction of the time using an intern with pen and paper. Faster than in your head. +0.01 coin per click.",
-    baseCost: 10.00,
+    baseCost: 5.00,
     currency: "USD",
     cbAction: async () => {
       store.dispatch("Miner/addClickWorth", 0.1)
@@ -80,7 +95,7 @@ const purchases = [
     name: "Intern with used TI-83",
     description:
       "Technically a computer. Intern will be grateful. +0.1 coin per click.",
-    baseCost: 20.00,
+    baseCost: 8.00,
     currency: "USD",
     cbAction: async () => {
       store.dispatch("Miner/addClickWorth", 0.2)
@@ -88,7 +103,7 @@ const purchases = [
     qty: 1,
     icon: require("@/assets/icons/ti83.jpg"),
   }),
-  new Purchase({
+  new StreamPurchase({
     name: "Ticker message",
     description:
       "Buy this and you can write a message that will scroll across the bottom of the stream.",
@@ -99,7 +114,7 @@ const purchases = [
       router.push({ name: "Message" });
     },
   }),
-  new Purchase({
+  new StreamPurchase({
     name: "Picture on the Green Screen",
     description:
       "Buy this and you can put a picture on the screen behind the band",
@@ -113,7 +128,7 @@ const purchases = [
   new Purchase({
     name: "Repurposed Peloton bike generator",
     description:
-      "Rip open that broken Peloton and wire it up to your mining rig. +13% efficiency.",
+      "Rip open that broken Peloton, wire it up to your mining rig, and pedal like mad. +13% efficiency.",
     baseCost: 200,
     currency: "USD",
     cbAction: async () => {
@@ -175,7 +190,7 @@ const purchases = [
       const efficiencyIncrease = .10;
       store.dispatch("Miner/increaseEfficiency", efficiencyIncrease);
     },
-    qty: 100,
+    qty: 9999999,
     icon: require("@/assets/icons/grubribe.png"),
     requiresAutominer: true
   }),
@@ -183,7 +198,7 @@ const purchases = [
     name: "Hydrofarm",
     description:
       "An undersea turbine system just to help you get some coin. +200% efficiency.",
-    baseCost: 1000,
+    baseCost: 9999999,
     currency: "USD",
     cbAction: async () => {
       const efficiencyIncrease = 1;

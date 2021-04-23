@@ -34,7 +34,7 @@ const upgrades = [
   new Upgrade(
     "Pentium 3",
     "An aging slab of silicon, but can solve some hashes in a pinch.",
-    5.0,
+    10.0,
     0.1010101,
     require("@/assets/icons/pentium.jpg")
   ),
@@ -42,7 +42,7 @@ const upgrades = [
     "Repurposed Bitcoin ASIC",
     "Dedicated chip just for solving hashes, stripped from an abandoned PRC mining warehouse. Should help.",
     100.0,
-    0.1,
+    0.2,
     require("@/assets/icons/asic.jpg")
   ),
   new Upgrade(
@@ -56,7 +56,7 @@ const upgrades = [
     "Specialized $THX ASIC",
     "CPU architect Fromm Lesche designed $THX ASIC. Dramatic improvement over unspecialized ASIC.",
     10000.0,
-    2,
+    5,
     require("@/assets/icons/asic.jpg")
   ),
 ];

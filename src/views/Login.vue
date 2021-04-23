@@ -38,8 +38,6 @@ export default {
     return {
       username: "",
       errorText: null,
-      errorBlinker: true,
-      showError: true,
     };
   },
   methods: {
@@ -50,9 +48,6 @@ export default {
         this.$router.push({ name: "Miner" });
       } else {
         this.errorText = res.reason;
-        this.errorBlinker = setInterval(() => {
-          this.showError = !this.showError;
-        }, 500);
       }
     },
   },

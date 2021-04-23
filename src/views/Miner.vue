@@ -1,19 +1,5 @@
 <template>
   <div class="home">
-    <div class="text-center m-2">
-      <a
-        @click="mineCoin"
-        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
-        >MINE {{ clickWorth.toFixed(3) }} $THX</a
-      >
-      <a
-        @click="sellCoin"
-        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
-      >
-        SELL $THX
-      </a>
-    </div>
-
     <div>1 $THX ≈ {{ exchangeRate.toFixed(5) }} USD</div>
 
     <div class="flex m-4 p-4 place-content-between text-center">
@@ -41,6 +27,24 @@
           % Efficiency
         </div>
       </div>
+    </div>
+    <div class="text-center m-2">
+      <a
+        @click="mineCoin"
+        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+        >MINE {{ clickWorth.toFixed(3) }} $THX</a
+      >
+      <a
+        @click="sellCoin"
+        class="border-r border-b bg-gray-200 border-black p-2 hover:bg-gray-500"
+      >
+        SELL $THX
+      </a>
+    </div>
+
+
+    <div v-if="purchases.length === 0 && upgrades.length === 0">
+      mine some thx coin by clicking mine $THX and then sell it for USD to unlock upgrades that help you mine faster. some things also cost THX coin, like buying a message on the stream ticker or adding an image to the background.
     </div>
     <transition-group name="slide-fade">
       <div
