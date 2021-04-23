@@ -164,6 +164,7 @@ export default {
         autosell,
       }
     ) {
+      console.log("loading state");
       state.totalCoin = totalCoin || 0;
       state.lifetimeCoin = lifetimeCoin || 0;
       state.highCoin = highCoin || 0;
@@ -198,6 +199,7 @@ export default {
       }
     },
     SAVE_STATE(state) {
+      console.log("nice");
       localStorage.setItem("minerState", JSON.stringify(state));
       localStorage.setItem("loadedBefore", true);
     },
@@ -282,11 +284,9 @@ export default {
     },
     initState(context) {
       if (localStorage.getItem("minerState")) {
-        if (localStorage.getItem("loadedBefore")) {
-          console.log("loading old state...");
-          const oldState = JSON.parse(localStorage.getItem("minerState"));
-          context.commit("LOAD_STATE", oldState);
-        }
+        console.log("loading old state...");
+        const oldState = JSON.parse(localStorage.getItem("minerState"));
+        context.commit("LOAD_STATE", oldState);
       }
     },
     saveState(context) {
