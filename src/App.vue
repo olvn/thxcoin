@@ -1,8 +1,7 @@
 <template>
   <div id="app">
     <div id="nav" class="flex justify-between" v-if="isLoggedIn && showNav">
-      <router-link to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
+      <router-link to="/"><span class="logo-rainbow">THX COIN MINER</span></router-link>
       <router-link to="/chat">
       <div class="p-2">
         <img class="w-8" src="@/assets/icons/aim.png"/>
@@ -50,7 +49,7 @@ export default {
   },
   data() {
     return {
-      updateTimerMs: 50,
+      updateTimerMs: 100,
       saveInterval: null,
       totalUpdateInterval: null
     };
@@ -63,7 +62,9 @@ export default {
       return ![
         'Ticker',
         'PictureBackground',
-        'Chat'
+        'Chat',
+        'Message',
+        'Picture'
       ].includes(this.$route.name)
     },
     cps() {

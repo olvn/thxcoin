@@ -17,11 +17,6 @@ export default {
       return stringToTickerArray(msg);
     });
 
-    console.log(" ububububub")
-    const htmlMessages = [
-
-    ];
-
     const list = [...messages, ...htmlMessages];
 
     return list[Math.floor(Math.random() * list.length)];
@@ -29,7 +24,6 @@ export default {
   stringToTickerArray,
   registerListeners() {
     socket.on("approvedTickerMessage", ({ message, username }) => {
-      console.log("beeee", message, 'username', username);
       store.dispatch("Ticker/addMessage", { message, username });
     });
   },

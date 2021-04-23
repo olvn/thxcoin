@@ -85,6 +85,8 @@ export default {
 <style scoped>
 .wrap {
   overflow: hidden;
+  background-color: white;
+  background-image: none;
 }
 
 .white-grad {

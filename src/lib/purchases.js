@@ -8,6 +8,7 @@ class Purchase {
     baseCost,
     currency,
     cbAction,
+    special = false,
     qty = 999999,
     icon = require("@/assets/icons/broken.jpg"),
     inflates = true,
@@ -25,6 +26,7 @@ class Purchase {
     this.cbAction = cbAction;
     this.inflates = inflates;
     this.requiresAutominer = requiresAutominer;
+    this.special = special;
   }
 
   inflation(currentCost) {
@@ -62,7 +64,7 @@ class StreamPurchase extends Purchase {
   buy() {
     this.numPurchased += 1;
     this.adjustedCost = store.getters['Miner/totalCoin'] / 2 + store.getters['Miner/currentCps'] * 90;
-    console.log("cost", this.adjustedCost);
+    this.cbAction();
   }
 }
 
@@ -107,8 +109,9 @@ const purchases = [
     name: "Ticker message",
     description:
       "Buy this and you can write a message that will scroll across the bottom of the stream.",
-    baseCost: 2,
+    baseCost: 3,
     currency: "THX",
+    special: true,
     cbAction: async () => {
       await store.dispatch("Miner/createTickerMessagePermission");
       router.push({ name: "Message" });
@@ -118,7 +121,8 @@ const purchases = [
     name: "Picture on the Green Screen",
     description:
       "Buy this and you can put a picture on the screen behind the band",
-    baseCost: 5,
+    baseCost: 2,
+    special: true,
     currency: "THX",
     cbAction: async () => {
       await store.dispatch("Miner/createPicturePermission");

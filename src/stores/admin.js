@@ -26,11 +26,13 @@ export default {
   },
   actions: {
     addUnapprovedItem(context, item) {
-      console.log(item.uuid)
       context.commit('ADD_UNAPPROVED_ITEM', item);
     },
     approveItem(context, item) {
       adminService.approveItem(item);
+      context.commit('REMOVE_ITEM', item);
+    },
+    declineItem(context, item) {
       context.commit('REMOVE_ITEM', item);
     }
   },

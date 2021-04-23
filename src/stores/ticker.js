@@ -35,10 +35,7 @@ export default {
       console.log("add msg");
       state.messageQueue.push(
         ...separator,
-        {
-          html: `<span class="text-blue-800">${username}</span>:&nbsp`,
-        },
-        ...tickerService.stringToTickerArray(message),
+        ...tickerService.stringToTickerArray(`${username}: ${message}`),
       );
       state.messageQueue.push();
     },
@@ -50,7 +47,6 @@ export default {
       return letter || '\xa0';
     },
     addMessage: (context, { message, username }) => {
-      console.log('booo', username)
       context.commit("ADD_MESSAGE", {
         message,
         username,

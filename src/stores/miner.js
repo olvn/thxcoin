@@ -198,8 +198,7 @@ export default {
       }
     },
     SAVE_STATE(state) {
-      console.log('boop', JSON.stringify(state));
-      localStorage.setItem("minerState", JSON.stringify(state));
+      // localStorage.setItem("minerState", JSON.stringify(state));
     },
   },
   actions: {
@@ -288,7 +287,6 @@ export default {
       }
     },
     saveState(context) {
-      console.log("saving state");
       context.commit("SAVE_STATE");
     },
   },
