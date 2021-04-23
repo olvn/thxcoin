@@ -17,7 +17,7 @@ export default {
       return stringToTickerArray(msg);
     });
 
-    const list = [...messages, ...htmlMessages];
+    const list = [...messages];
 
     return list[Math.floor(Math.random() * list.length)];
   },
