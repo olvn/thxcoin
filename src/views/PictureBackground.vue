@@ -47,7 +47,11 @@ export default {
   },
   methods: {
     translate(image) {
-      return `transform: translate(${image.position.x}px, ${image.position.y}px); `;
+      return {
+        top: image.position.y + 'px',
+        left: image.position.x + 'px',
+        position: 'fixed'
+      }
     },
   },
   beforeDestroy() {
