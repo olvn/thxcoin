@@ -32,7 +32,7 @@ export default {
         deathTime: new Date().getTime() + this.secondsToLive * 1000,
         position: {
           x: Math.random() * 1800 + 30,
-          y: Math.random() * 900 + 30,
+          y: Math.random() * 300 + 30,
         },
       });
     });
@@ -62,12 +62,13 @@ export default {
 
 <style >
 .fader {
-    animation: spin 5s linear, fadeOut 5s;
+    animation: spin 40s linear, fadeOut 10s;
     animation-iteration-count: 1;
     opacity: 0;
 }
 @keyframes fadeOut {
    0% {opacity: 1;}
+   50% {opacity: 1;}
    100% {opacity: 0;} 
 } 
 @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
